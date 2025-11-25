@@ -2,9 +2,9 @@
 # nfx-containers - Dependencies configuration
 #==============================================================================
 
-#----------------------------
+#----------------------------------------------
 # Output configuration
-#----------------------------
+#----------------------------------------------
 
 set(_SAVED_CMAKE_REQUIRED_QUIET     ${CMAKE_REQUIRED_QUIET})
 set(_SAVED_CMAKE_MESSAGE_LOG_LEVEL  ${CMAKE_MESSAGE_LOG_LEVEL})
@@ -99,9 +99,9 @@ if(NFX_CONTAINERS_BUILD_BENCHMARKS)
 	endif()
 endif()
 
-#----------------------------
+#----------------------------------------------
 # Dependency fetching
-#----------------------------
+#----------------------------------------------
 
 if(NOT nfx-hashing_FOUND)
 	FetchContent_MakeAvailable(nfx-hashing)
@@ -119,9 +119,9 @@ if(NFX_CONTAINERS_BUILD_BENCHMARKS)
 	endif()
 endif()
 
-#----------------------------
+#----------------------------------------------
 # Cleanup
-#----------------------------
+#----------------------------------------------
 
 set(CMAKE_REQUIRED_QUIET ${_SAVED_CMAKE_REQUIRED_QUIET})
 set(CMAKE_MESSAGE_LOG_LEVEL ${_SAVED_CMAKE_MESSAGE_LOG_LEVEL})

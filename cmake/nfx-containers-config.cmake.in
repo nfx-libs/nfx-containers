@@ -27,8 +27,6 @@ find_dependency(nfx-hashing REQUIRED)
 set_and_check(NFX_CONTAINERS_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
 set_and_check(NFX_CONTAINERS_LIB_DIR "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
 
-# Our library dependencies (none - self-contained library)
-
 # Include the targets file
 include("${CMAKE_CURRENT_LIST_DIR}/nfx-containers-targets.cmake")
 

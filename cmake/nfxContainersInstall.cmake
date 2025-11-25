@@ -39,15 +39,15 @@ install(
 # Install library targets
 #----------------------------------------------
 
-set(INSTALL_TARGETS)
+set(install_targets)
 
 # Header-only interface library
-list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
+list(APPEND install_targets ${PROJECT_NAME})
 
 # Install nfx-hashing dependency if built via FetchContent
 if(NOT nfx-hashing_FOUND AND TARGET nfx-hashing::nfx-hashing)
 	# Add nfx-hashing to export set
-	list(APPEND INSTALL_TARGETS nfx-hashing)
+	list(APPEND install_targets nfx-hashing)
 	
 	# Install nfx-hashing headers
 	get_target_property(NFX_HASHING_SOURCE_DIR nfx-hashing::nfx-hashing SOURCE_DIR)
@@ -61,16 +61,6 @@ if(NOT nfx-hashing_FOUND AND TARGET nfx-hashing::nfx-hashing)
 				PATTERN "*.hpp"
 				PATTERN "*.inl"
 		)
-		
-		# Install nfx-hashing LICENSE file
-		if(EXISTS "${NFX_HASHING_SOURCE_DIR}/LICENSE.txt")
-			install(
-				FILES "${NFX_HASHING_SOURCE_DIR}/LICENSE.txt"
-				DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
-				RENAME LICENSE-nfx-hashing.txt
-				COMPONENT Development
-			)
-		endif()
 		
 		# Install nfx-hashing CMake config files
 		install(
@@ -105,9 +95,9 @@ if(NOT nfx-hashing_FOUND AND TARGET nfx-hashing::nfx-hashing)
 	endif()
 endif()
 
-if(INSTALL_TARGETS)
+if(install_targets)
 	# Separate nfx-hashing from nfx-containers targets
-	list(REMOVE_ITEM INSTALL_TARGETS nfx-hashing)
+	list(REMOVE_ITEM install_targets nfx-hashing)
 	set(NFX_HASHING_TARGET "")
 	if(NOT nfx-hashing_FOUND AND TARGET nfx-hashing::nfx-hashing)
 		set(NFX_HASHING_TARGET nfx-hashing)
@@ -130,7 +120,7 @@ if(INSTALL_TARGETS)
 	
 	# Install nfx-containers targets
 	install(
-		TARGETS ${INSTALL_TARGETS}
+		TARGETS ${install_targets}
 		EXPORT nfx-containers-targets
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 			COMPONENT Development
@@ -197,13 +187,18 @@ install(
 install(
 	FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
 	DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+	RENAME "LICENSE-${PROJECT_NAME}.txt"
 )
 
-install(
-	DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
-	DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
-	FILES_MATCHING PATTERN "LICENSE.txt-*"
-)
+file(GLOB license_files "${CMAKE_CURRENT_SOURCE_DIR}/licenses/LICENSE-*")
+foreach(license_file ${license_files})
+	get_filename_component(license_name ${license_file} NAME)
+	install(
+		FILES ${license_file}
+		DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+		RENAME "${license_name}.txt"
+	)
+endforeach()
 
 #----------------------------------------------
 # Install documentation
@@ -236,4 +231,4 @@ if(NFX_CONTAINERS_BUILD_DOCUMENTATION)
 	endif()
 endif()
 
-message(STATUS "Installation configured for targets: ${INSTALL_TARGETS}")
+message(STATUS "Installation configured for targets: ${install_targets}")
