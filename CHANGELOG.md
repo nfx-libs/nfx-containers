@@ -31,6 +31,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - NIL
 
+## [0.1.1] - 2025-11-27
+
+### Changed
+
+- Consolidated packaging tool detection in CMake configuration
+
+### Fixed
+
+- Removed incorrect runtime dependencies from DEB/RPM packages (header-only library)
+
 ## [0.1.0] - 2025-11-15 - Initial Release
 
 - **FastHashMap**: Mutable hash map with Robin Hood hashing algorithm
