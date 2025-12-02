@@ -16,20 +16,6 @@ project(nfx-containers
 )
 
 #----------------------------------------------
-# Installation prefix configuration
-#----------------------------------------------
-
-# Set default installation path to nfx
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-	if(WIN32)
-		set(CMAKE_INSTALL_PREFIX "C:/Program Files/nfx" CACHE PATH "Installation directory" FORCE)
-	else()
-		set(CMAKE_INSTALL_PREFIX "/usr/local/nfx" CACHE PATH "Installation directory" FORCE)
-	endif()
-	message(STATUS "Setting install prefix to '${CMAKE_INSTALL_PREFIX}'")
-endif()
-
-#----------------------------------------------
 # Version configuration
 #----------------------------------------------
 
@@ -37,13 +23,6 @@ set(NFX_CONTAINERS_VERSION_MAJOR ${PROJECT_VERSION_MAJOR} CACHE INTERNAL "nfx-co
 set(NFX_CONTAINERS_VERSION_MINOR ${PROJECT_VERSION_MINOR} CACHE INTERNAL "nfx-containers minor version")
 set(NFX_CONTAINERS_VERSION_PATCH ${PROJECT_VERSION_PATCH} CACHE INTERNAL "nfx-containers patch version")
 set(NFX_CONTAINERS_VERSION       ${PROJECT_VERSION}       CACHE INTERNAL "nfx-containers version")
-
-#----------------------------------------------
-# Project metadata
-#----------------------------------------------
-
-set(NFX_CONTAINERS_LICENSE "MIT")
-set(NFX_CONTAINERS_LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 
 #----------------------------------------------
 # Testing setup
