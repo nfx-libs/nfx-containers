@@ -798,6 +798,31 @@ namespace nfx::containers::test
 		EXPECT_EQ( set2.size(), 2 );
 		EXPECT_TRUE( set2.contains( "alpha" ) );
 		EXPECT_TRUE( set2.contains( "beta" ) );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( set1.size(), 0 );
+		EXPECT_TRUE( set1.isEmpty() );
+	}
+
+	TEST( FastHashSetTests, MoveSemantics_Assignment )
+	{
+		FastHashSet<std::string> set1;
+		set1.insert( "alpha" );
+		set1.insert( "beta" );
+
+		FastHashSet<std::string> set2;
+		set2.insert( "gamma" );
+		
+		set2 = std::move( set1 );
+
+		EXPECT_EQ( set2.size(), 2 );
+		EXPECT_TRUE( set2.contains( "alpha" ) );
+		EXPECT_TRUE( set2.contains( "beta" ) );
+		EXPECT_FALSE( set2.contains( "gamma" ) );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( set1.size(), 0 );
+		EXPECT_TRUE( set1.isEmpty() );
 	}
 
 	//=====================================================================

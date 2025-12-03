@@ -958,4 +958,44 @@ namespace nfx::containers::test
 		// Original string should be moved-from (empty or in moved-from state)
 		EXPECT_TRUE( value.empty() || value == "movable" );
 	}
+
+	TEST( TransparentHashSetTests, MoveConstructor_TransfersOwnership )
+	{
+		TransparentHashSet<std::string> set1;
+		set1.insert( "alpha" );
+		set1.insert( "beta" );
+		set1.insert( "gamma" );
+
+		TransparentHashSet<std::string> set2( std::move( set1 ) );
+
+		EXPECT_EQ( set2.size(), 3 );
+		EXPECT_TRUE( set2.contains( "alpha" ) );
+		EXPECT_TRUE( set2.contains( "beta" ) );
+		EXPECT_TRUE( set2.contains( "gamma" ) );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( set1.size(), 0 );
+		EXPECT_TRUE( set1.empty() );
+	}
+
+	TEST( TransparentHashSetTests, MoveAssignment_TransfersOwnership )
+	{
+		TransparentHashSet<std::string> set1;
+		set1.insert( "alpha" );
+		set1.insert( "beta" );
+
+		TransparentHashSet<std::string> set2;
+		set2.insert( "old" );
+
+		set2 = std::move( set1 );
+
+		EXPECT_EQ( set2.size(), 2 );
+		EXPECT_TRUE( set2.contains( "alpha" ) );
+		EXPECT_TRUE( set2.contains( "beta" ) );
+		EXPECT_FALSE( set2.contains( "old" ) );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( set1.size(), 0 );
+		EXPECT_TRUE( set1.empty() );
+	}
 } // namespace nfx::containers::test

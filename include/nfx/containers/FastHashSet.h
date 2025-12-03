@@ -158,14 +158,16 @@ namespace nfx::containers
 
 		/**
 		 * @brief Move constructor
+		 * @param other Set to move from (will be left in valid but empty state)
 		 */
-		FastHashSet( FastHashSet&& ) noexcept = default;
+		inline FastHashSet( FastHashSet&& other ) noexcept;
 
 		/**
 		 * @brief Move assignment operator
+		 * @param other Set to move from (will be left in valid but empty state)
 		 * @return Reference to this set
 		 */
-		FastHashSet& operator=( FastHashSet&& ) noexcept = default;
+		inline FastHashSet& operator=( FastHashSet&& other ) noexcept;
 
 		/**
 		 * @brief Copy constructor

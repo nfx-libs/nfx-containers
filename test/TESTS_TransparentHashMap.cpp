@@ -985,4 +985,44 @@ namespace nfx::containers::test
 		EXPECT_EQ( *ptr, 100 );
 		EXPECT_EQ( map.at( 1 ), nullptr ); // Moved from
 	}
+
+	TEST( TransparentHashMapTests, MoveConstructor_TransfersOwnership )
+	{
+		TransparentHashMap<std::string, int> map1;
+		map1["alpha"] = 1;
+		map1["beta"] = 2;
+		map1["gamma"] = 3;
+
+		TransparentHashMap<std::string, int> map2( std::move( map1 ) );
+
+		EXPECT_EQ( map2.size(), 3 );
+		EXPECT_EQ( map2.at( "alpha" ), 1 );
+		EXPECT_EQ( map2.at( "beta" ), 2 );
+		EXPECT_EQ( map2.at( "gamma" ), 3 );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( map1.size(), 0 );
+		EXPECT_TRUE( map1.empty() );
+	}
+
+	TEST( TransparentHashMapTests, MoveAssignment_TransfersOwnership )
+	{
+		TransparentHashMap<std::string, int> map1;
+		map1["alpha"] = 1;
+		map1["beta"] = 2;
+
+		TransparentHashMap<std::string, int> map2;
+		map2["old"] = 99;
+
+		map2 = std::move( map1 );
+
+		EXPECT_EQ( map2.size(), 2 );
+		EXPECT_EQ( map2.at( "alpha" ), 1 );
+		EXPECT_EQ( map2.at( "beta" ), 2 );
+		EXPECT_EQ( map2.find( "old" ), map2.end() );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( map1.size(), 0 );
+		EXPECT_TRUE( map1.empty() );
+	}
 } // namespace nfx::containers::test

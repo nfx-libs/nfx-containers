@@ -87,6 +87,46 @@ namespace nfx::containers
 		m_buckets.resize( capacity );
 	}
 
+	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+	inline FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::FastHashSet( FastHashSet&& other ) noexcept
+		: m_buckets( std::move( other.m_buckets ) ),
+		  m_size( other.m_size ),
+		  m_capacity( other.m_capacity ),
+		  m_mask( other.m_mask ),
+		  m_hasher( std::move( other.m_hasher ) ),
+		  m_keyEqual( std::move( other.m_keyEqual ) )
+	{
+		// Reset source to valid empty state
+		other.m_size = 0;
+		other.m_capacity = INITIAL_CAPACITY;
+		other.m_mask = INITIAL_CAPACITY - 1;
+		other.m_buckets.clear();
+		other.m_buckets.resize( INITIAL_CAPACITY );
+	}
+
+	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+	inline FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>&
+	FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::operator=( FastHashSet&& other ) noexcept
+	{
+		if ( this != &other )
+		{
+			m_buckets = std::move( other.m_buckets );
+			m_size = other.m_size;
+			m_capacity = other.m_capacity;
+			m_mask = other.m_mask;
+			m_hasher = std::move( other.m_hasher );
+			m_keyEqual = std::move( other.m_keyEqual );
+
+			// Reset source to valid empty state
+			other.m_size = 0;
+			other.m_capacity = INITIAL_CAPACITY;
+			other.m_mask = INITIAL_CAPACITY - 1;
+			other.m_buckets.clear();
+			other.m_buckets.resize( INITIAL_CAPACITY );
+		}
+		return *this;
+	}
+
 	//----------------------------------------------
 	// Core operations
 	//----------------------------------------------

@@ -161,13 +161,13 @@ namespace nfx::containers
 		/**
 		 * @brief Move constructor
 		 */
-		FastHashMap( FastHashMap&& ) noexcept = default;
+		FastHashMap( FastHashMap&& ) noexcept;
 
 		/**
 		 * @brief Move assignment operator
 		 * @return Reference to this map
 		 */
-		FastHashMap& operator=( FastHashMap&& ) noexcept = default;
+		FastHashMap& operator=( FastHashMap&& ) noexcept;
 
 		/**
 		 * @brief Copy constructor

@@ -3031,4 +3031,48 @@ namespace nfx::containers::test
 		int secondCount = constructCount;
 		EXPECT_EQ( secondCount, 0 ); // No construction - key exists!
 	}
+
+	//=====================================================================
+	// Move semantics - constructor and assignment
+	//=====================================================================
+
+	TEST( FastHashMapTests, MoveConstructor_TransfersOwnership )
+	{
+		FastHashMap<std::string, int> map1;
+		map1.insertOrAssign( "alpha", 1 );
+		map1.insertOrAssign( "beta", 2 );
+		map1.insertOrAssign( "gamma", 3 );
+
+		FastHashMap<std::string, int> map2( std::move( map1 ) );
+
+		EXPECT_EQ( map2.size(), 3 );
+		EXPECT_EQ( *map2.find( "alpha" ), 1 );
+		EXPECT_EQ( *map2.find( "beta" ), 2 );
+		EXPECT_EQ( *map2.find( "gamma" ), 3 );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( map1.size(), 0 );
+		EXPECT_TRUE( map1.isEmpty() );
+	}
+
+	TEST( FastHashMapTests, MoveAssignment_TransfersOwnership )
+	{
+		FastHashMap<std::string, int> map1;
+		map1.insertOrAssign( "alpha", 1 );
+		map1.insertOrAssign( "beta", 2 );
+
+		FastHashMap<std::string, int> map2;
+		map2.insertOrAssign( "old", 99 );
+
+		map2 = std::move( map1 );
+
+		EXPECT_EQ( map2.size(), 2 );
+		EXPECT_EQ( *map2.find( "alpha" ), 1 );
+		EXPECT_EQ( *map2.find( "beta" ), 2 );
+		EXPECT_EQ( map2.find( "old" ), nullptr );
+
+		// Verify source is moved-from (should be empty)
+		EXPECT_EQ( map1.size(), 0 );
+		EXPECT_TRUE( map1.isEmpty() );
+	}
 } // namespace nfx::containers::test

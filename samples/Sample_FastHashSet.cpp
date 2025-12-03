@@ -56,7 +56,7 @@ int main()
 
 		std::cout << "insert(\"alice\"): " << ( inserted1 ? "true" : "false" ) << "\n";
 		std::cout << "insert(\"bob\"): " << ( inserted2 ? "true" : "false" ) << "\n";
-		std::cout << "insert(\"alice\") again: " << ( inserted3 ? "false (duplicate)" : "true" ) << "\n";
+		std::cout << "insert(\"alice\") again: " << ( inserted3 ? "true" : "false (duplicate)" ) << "\n";
 		std::cout << "Size: " << usernames.size() << "\n";
 		std::cout << "\n";
 	}
