@@ -398,10 +398,10 @@ namespace nfx::containers
 		 */
 		struct Bucket
 		{
-			TKey key{};			 ///< The stored key
-			HashType hash{};	 ///< Cached hash value for fast comparison (32 or 64-bit)
-			uint32_t distance{}; ///< Robin Hood displacement distance from ideal position
-			bool occupied{};	 ///< Bucket occupancy flag (true = occupied, false = empty)
+			std::optional<TKey> data; ///< The stored key
+			HashType hash{};		  ///< Cached hash value for fast comparison (32 or 64-bit)
+			uint32_t distance{};	  ///< Robin Hood displacement distance from ideal position
+			bool occupied{};		  ///< Bucket occupancy flag (true = occupied, false = empty)
 		};
 
 		/**

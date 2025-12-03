@@ -109,9 +109,9 @@ namespace nfx::containers
 				return nullptr;
 			}
 
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( bucket.data->first, key ) )
 			{
-				return &bucket.value;
+				return &bucket.data->second;
 			}
 
 			++distance;
@@ -137,9 +137,9 @@ namespace nfx::containers
 				return nullptr;
 			}
 
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( bucket.data->first, key ) )
 			{
-				return &bucket.value;
+				return &bucket.data->second;
 			}
 
 			++distance;
@@ -303,8 +303,7 @@ namespace nfx::containers
 					}
 				}
 
-				m_buckets[idx].key = key;
-				m_buckets[idx].value = TValue( std::forward<Args>( args )... );
+				m_buckets[idx].data.emplace( key, TValue( std::forward<Args>( args )... ) );
 				m_buckets[idx].hash = hash;
 				m_buckets[idx].distance = 0;
 				m_buckets[idx].occupied = true;
@@ -313,7 +312,7 @@ namespace nfx::containers
 				return { Iterator{ &m_buckets[idx], m_buckets.data() + m_capacity }, true };
 			}
 
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( bucket.data->first, key ) )
 			{
 				return { Iterator{ &bucket, m_buckets.data() + m_capacity }, false };
 			}
@@ -346,8 +345,7 @@ namespace nfx::containers
 					}
 				}
 
-				m_buckets[idx].key = std::move( key );
-				m_buckets[idx].value = TValue( std::forward<Args>( args )... );
+				m_buckets[idx].data.emplace( std::move( key ), TValue( std::forward<Args>( args )... ) );
 				m_buckets[idx].hash = hash;
 				m_buckets[idx].distance = 0;
 				m_buckets[idx].occupied = true;
@@ -356,7 +354,7 @@ namespace nfx::containers
 				return { Iterator{ &m_buckets[idx], m_buckets.data() + m_capacity }, true };
 			}
 
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( bucket.data->first, key ) )
 			{
 				return { Iterator{ &bucket, m_buckets.data() + m_capacity }, false };
 			}
@@ -395,7 +393,7 @@ namespace nfx::containers
 				{
 					if ( oldBuckets[i].occupied )
 					{
-						insertOrAssignInternal( std::move( oldBuckets[i].key ), std::move( oldBuckets[i].value ) );
+						insertOrAssignInternal( std::move( oldBuckets[i].data->first ), std::move( oldBuckets[i].data->second ) );
 					}
 				}
 			}
@@ -413,7 +411,7 @@ namespace nfx::containers
 
 		while ( distance <= m_buckets[pos].distance && m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data->first, key ) )
 			{
 				eraseAtPosition( pos );
 				--m_size;
@@ -585,7 +583,7 @@ namespace nfx::containers
 		// Fast path: check if slot is empty
 		if ( !m_buckets[pos].occupied )
 		{
-			m_buckets[pos] = Bucket{ key, std::forward<ValueType>( value ), hash, distance, true };
+			m_buckets[pos] = Bucket{ { { key, std::forward<ValueType>( value ) } }, hash, distance, true };
 			++m_size;
 			return;
 		}
@@ -593,10 +591,10 @@ namespace nfx::containers
 		// First pass: check for existing key or find insertion point
 		while ( m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data->first, key ) )
 			{
 				// Update existing key
-				m_buckets[pos].value = std::forward<ValueType>( value );
+				m_buckets[pos].data->second = std::forward<ValueType>( value );
 				return;
 			}
 
@@ -611,7 +609,7 @@ namespace nfx::containers
 		}
 
 		// If we're here, we need to insert a new bucket
-		Bucket newBucket{ key, std::forward<ValueType>( value ), hash, distance, true };
+		Bucket newBucket{ { { key, std::forward<ValueType>( value ) } }, hash, distance, true };
 
 		// Robin Hood displacement loop (optimized swap)
 		while ( m_buckets[pos].occupied )
@@ -653,7 +651,7 @@ namespace nfx::containers
 		if ( !m_buckets[pos].occupied )
 		{
 			// Move key directly into bucket (no copy!)
-			m_buckets[pos] = Bucket{ std::move( key ), std::forward<ValueType>( value ), hash, distance, true };
+			m_buckets[pos] = Bucket{ { { std::move( key ), std::forward<ValueType>( value ) } }, hash, distance, true };
 			++m_size;
 			return;
 		}
@@ -661,10 +659,10 @@ namespace nfx::containers
 		// First pass: check for existing key or find insertion point
 		while ( m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data->first, key ) )
 			{
 				// Update existing key (key is discarded, value updated)
-				m_buckets[pos].value = std::forward<ValueType>( value );
+				m_buckets[pos].data->second = std::forward<ValueType>( value );
 				return;
 			}
 
@@ -679,7 +677,7 @@ namespace nfx::containers
 		}
 
 		// If we're here, we need to insert a new bucket (move key!)
-		Bucket newBucket{ std::move( key ), std::forward<ValueType>( value ), hash, distance, true };
+		Bucket newBucket{ { { std::move( key ), std::forward<ValueType>( value ) } }, hash, distance, true };
 
 		// Robin Hood displacement loop (optimized swap)
 		while ( m_buckets[pos].occupied )
@@ -724,7 +722,7 @@ namespace nfx::containers
 		{
 			if ( oldBuckets[i].occupied )
 			{
-				insertOrAssignInternal( std::move( oldBuckets[i].key ), std::move( oldBuckets[i].value ) );
+				insertOrAssignInternal( std::move( oldBuckets[i].data->first ), std::move( oldBuckets[i].data->second ) );
 			}
 		}
 	}
@@ -777,7 +775,7 @@ namespace nfx::containers
 	FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::operator*() const
 	{
 		// return reinterpret_cast<reference>( *m_bucket );
-		return *std::launder( reinterpret_cast<pointer>( &m_bucket->key ) );
+		return *std::launder( reinterpret_cast<pointer>( &m_bucket->data.value() ) );
 	}
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
@@ -868,7 +866,7 @@ namespace nfx::containers
 	FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator*() const
 	{
 		// return reinterpret_cast<reference>( *m_bucket );
-		return *std::launder( reinterpret_cast<pointer>( &m_bucket->key ) );
+		return *std::launder( reinterpret_cast<pointer>( &m_bucket->data.value() ) );
 	}
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>

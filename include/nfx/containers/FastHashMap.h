@@ -38,6 +38,7 @@
 #include <functional>
 #include <initializer_list>
 #include <iterator>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -484,11 +485,10 @@ namespace nfx::containers
 		 */
 		struct Bucket
 		{
-			TKey key{};			 ///< The stored key
-			TValue value{};		 ///< The associated value
-			HashType hash{};	 ///< Cached hash value (32 or 64-bit)
-			uint32_t distance{}; ///< Robin Hood displacement distance
-			bool occupied{};	 ///< Bucket occupancy flag
+			std::optional<std::pair<TKey, TValue>> data; ///< Optional key-value pair (empty for unoccupied buckets)
+			HashType hash{};							 ///< Cached hash value (32 or 64-bit)
+			uint32_t distance{};						 ///< Robin Hood displacement distance
+			bool occupied{};							 ///< Bucket occupancy flag (fast path check)
 		};
 
 		/**

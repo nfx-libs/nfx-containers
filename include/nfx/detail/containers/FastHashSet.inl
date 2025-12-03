@@ -110,9 +110,9 @@ namespace nfx::containers
 			}
 
 			// Hot path: hash comparison first, then key equality
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( *bucket.data, key ) )
 			{
-				return &bucket.key;
+				return &bucket.data.value();
 			}
 
 			++distance;
@@ -192,7 +192,7 @@ namespace nfx::containers
 					}
 				}
 
-				m_buckets[idx].key = std::move( key );
+				m_buckets[idx].data.emplace( std::move( key ) );
 				m_buckets[idx].hash = hash;
 				m_buckets[idx].distance = 0;
 				m_buckets[idx].occupied = true;
@@ -201,7 +201,7 @@ namespace nfx::containers
 				return { Iterator{ &m_buckets[idx], m_buckets.data() + m_capacity }, true };
 			}
 
-			if ( bucket.hash == hash && keysEqual( bucket.key, key ) )
+			if ( bucket.hash == hash && keysEqual( bucket.data.value(), key ) )
 			{
 				// Key exists - return existing element
 				return { Iterator{ &bucket, m_buckets.data() + m_capacity }, false };
@@ -241,7 +241,7 @@ namespace nfx::containers
 				{
 					if ( oldBuckets[i].occupied )
 					{
-						insertInternal( std::move( oldBuckets[i].key ) );
+						insertInternal( std::move( oldBuckets[i].data.value() ) );
 					}
 				}
 			}
@@ -259,7 +259,7 @@ namespace nfx::containers
 
 		while ( distance <= m_buckets[pos].distance && m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( *m_buckets[pos].data, key ) )
 			{
 				eraseAtPosition( pos );
 				--m_size;
@@ -429,7 +429,7 @@ namespace nfx::containers
 		// Fast path: check if slot is empty
 		if ( !m_buckets[pos].occupied )
 		{
-			m_buckets[pos] = Bucket{ key, hash, distance, true };
+			m_buckets[pos] = Bucket{ { key }, hash, distance, true };
 			++m_size;
 			return true;
 		}
@@ -437,7 +437,7 @@ namespace nfx::containers
 		// First pass: check for existing key or find insertion point
 		while ( m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data.value(), key ) )
 			{
 				// Key already exists - don't insert
 				return false;
@@ -454,7 +454,7 @@ namespace nfx::containers
 		}
 
 		// If we're here, we need to insert a new bucket
-		Bucket newBucket{ key, hash, distance, true };
+		Bucket newBucket{ { key }, hash, distance, true };
 
 		// Robin Hood displacement loop (optimized swap)
 		while ( m_buckets[pos].occupied )
@@ -503,7 +503,7 @@ namespace nfx::containers
 		// First pass: check for existing key or find insertion point
 		while ( m_buckets[pos].occupied )
 		{
-			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].key, key ) )
+			if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data.value(), key ) )
 			{
 				// Key already exists - don't insert
 				return false;
@@ -520,7 +520,7 @@ namespace nfx::containers
 		}
 
 		// If we're here, we need to insert a new bucket (move key!)
-		Bucket newBucket{ std::move( key ), hash, distance, true };
+		Bucket newBucket{ { std::move( key ) }, hash, distance, true };
 
 		// Robin Hood displacement loop (optimized swap)
 		while ( m_buckets[pos].occupied )
@@ -565,7 +565,7 @@ namespace nfx::containers
 		{
 			if ( oldBuckets[i].occupied )
 			{
-				insertInternal( std::move( oldBuckets[i].key ) );
+				insertInternal( std::move( oldBuckets[i].data.value() ) );
 			}
 		}
 	}
@@ -617,14 +617,14 @@ namespace nfx::containers
 	inline typename FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::reference
 	FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::operator*() const
 	{
-		return m_bucket->key;
+		return m_bucket->data.value();
 	}
 
 	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
 	inline typename FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::pointer
 	FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::operator->() const
 	{
-		return &m_bucket->key;
+		return &m_bucket->data.value();
 	}
 
 	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
@@ -705,14 +705,14 @@ namespace nfx::containers
 	inline typename FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::reference
 	FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator*() const
 	{
-		return m_bucket->key;
+		return m_bucket->data.value();
 	}
 
 	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
 	inline typename FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::pointer
 	FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator->() const
 	{
-		return &m_bucket->key;
+		return &m_bucket->data.value();
 	}
 
 	template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>

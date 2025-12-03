@@ -59,8 +59,6 @@ namespace nfx::containers
 
 		if ( itemCount == 0 )
 		{
-			m_table = std::move( items );
-
 			return;
 		}
 
@@ -120,7 +118,7 @@ namespace nfx::containers
 			{
 				// Single-item bucket: place directly at bucket index
 				size_t itemIndex = bucket[0].first;
-				m_table[bucketIndex] = std::move( items[itemIndex] );
+				m_table[bucketIndex].emplace( std::move( items[itemIndex] ) );
 				m_occupied[bucketIndex] = 1;
 				m_seeds[bucketIndex] = -static_cast<seed_type>( bucketIndex + 1 );
 			}
@@ -172,7 +170,7 @@ namespace nfx::containers
 						{
 							size_t itemIndex = bucket[i].first;
 							size_t pos = positions[i];
-							m_table[pos] = std::move( items[itemIndex] );
+							m_table[pos].emplace( std::move( items[itemIndex] ) );
 							m_occupied[pos] = 1;
 						}
 						m_seeds[originalBucketIndex] = static_cast<seed_type>( seed );
@@ -255,7 +253,7 @@ namespace nfx::containers
 									? static_cast<size_t>( -seed - 1 )
 									: hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSize );
 
-		return m_occupied[position] && m_keyEqual( m_table[position].first, key );
+		return m_occupied[position] && m_keyEqual( m_table[position]->first, key );
 	}
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename Hasher, typename KeyEqual>
@@ -276,9 +274,9 @@ namespace nfx::containers
 									? static_cast<size_t>( -seed - 1 )
 									: hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSize );
 
-		if ( m_occupied[position] && m_keyEqual( m_table[position].first, key ) )
+		if ( m_occupied[position] && m_keyEqual( m_table[position]->first, key ) )
 		{
-			return &m_table[position].second;
+			return &m_table[position]->second;
 		}
 
 		return nullptr;
@@ -359,7 +357,7 @@ namespace nfx::containers
 	//---------------------------
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename Hasher, typename KeyEqual>
-	inline PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::Iterator( const std::vector<std::pair<TKey, TValue>>* table, const std::vector<uint8_t>* occupied, size_t index )
+	inline PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::Iterator( const std::vector<std::optional<std::pair<TKey, TValue>>>* table, const std::vector<uint8_t>* occupied, size_t index )
 		: m_table{ table },
 		  m_occupied{ occupied },
 		  m_index{ index }
@@ -374,13 +372,13 @@ namespace nfx::containers
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename Hasher, typename KeyEqual>
 	inline PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::reference PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::operator*() const
 	{
-		return m_table->operator[]( m_index );
+		return *m_table->operator[]( m_index );
 	}
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename Hasher, typename KeyEqual>
 	inline PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::pointer PerfectHashMap<TKey, TValue, HashType, Seed, Hasher, KeyEqual>::Iterator::operator->() const
 	{
-		return &m_table->operator[]( m_index );
+		return &*m_table->operator[]( m_index );
 	}
 
 	template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename Hasher, typename KeyEqual>
@@ -388,7 +386,6 @@ namespace nfx::containers
 	{
 		++m_index;
 		skipEmpty();
-
 		return *this;
 	}
 
