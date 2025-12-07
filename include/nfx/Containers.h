@@ -35,5 +35,6 @@
 #include "containers/FastHashMap.h"
 #include "containers/FastHashSet.h"
 #include "containers/PerfectHashMap.h"
+#include "containers/SmallVector.h"
 #include "containers/TransparentHashMap.h"
 #include "containers/TransparentHashSet.h"

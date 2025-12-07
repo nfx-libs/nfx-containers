@@ -49,6 +49,7 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 - **FastHashSet**: Robin Hood hash set with superior performance over `std::unordered_set`
 - **TransparentHashMap**: Enhanced `std::unordered_map` with heterogeneous lookup
 - **TransparentHashSet**: Enhanced `std::unordered_set` with heterogeneous lookup
+- **SmallVector**: Small vector optimization with stack storage and automatic heap fallback
 
 ### 🌐 Heterogeneous Lookup Optimization
 
@@ -279,6 +280,18 @@ int main()
         std::cout << "Apple costs $" << it->second << "\n";
     }
 
+    // SmallVector - Stack-optimized vector for small collections
+    SmallVector<int, 4> numbers;  // Stores up to 4 ints on stack
+    numbers.push_back(10);
+    numbers.push_back(20);
+    numbers.push_back(30);
+    
+    // No heap allocation for small sizes!
+    for (int num : numbers) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n";
+
     return 0;
 }
 ```
@@ -293,6 +306,7 @@ Bob: 25
 Alice: 30
 two = 2
 Apple costs $1.99
+10 20 30
 ```
 
 ## Installation & Packaging
@@ -354,11 +368,12 @@ nfx-containers/
 │   │   ├── FastHashMap.h        # Robin Hood hash map implementation
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
 │   │   ├── PerfectHashMap.h     # Perfect hash map (CHD algorithm)
+│   │   ├── SmallVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
 │   │   └── TransparentHashSet.h # Enhanced unordered_set wrapper
 │   └── detail/                  # Implementation details
 ├── samples/                     # Example usage and demonstrations
-└── test/                        # Comprehensive unit tests with GoogleTest
+└── test/                        # Unit tests with GoogleTest
 ```
 
 ## Performance
@@ -401,4 +416,4 @@ All dependencies are automatically fetched via CMake FetchContent when building 
 
 ---
 
-_Updated on November 15, 2025_
+_Updated on December 07, 2025_

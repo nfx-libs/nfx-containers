@@ -41,6 +41,7 @@ list(APPEND test_sources
 	TESTS_FastHashMap.cpp
 	TESTS_FastHashSet.cpp
 	TESTS_PerfectHashMap.cpp
+	TESTS_SmallVector.cpp
 	TESTS_TransparentHashMap.cpp
 	TESTS_TransparentHashSet.cpp
 )
