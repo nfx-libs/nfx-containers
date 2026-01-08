@@ -23,7 +23,7 @@
  */
 
 /**
- * @file TESTS_FastHashSet.cpp
+ * @file Tests_FastHashSet.cpp
  * @brief Unit tests for FastHashSet (Robin Hood hashing set container)
  */
 

@@ -27,20 +27,20 @@
 /** @brief No unique address attribute for zero-cost empty member optimization */
 #if defined( __clang__ )
 // Clang or Clang-CL: Use feature detection regardless of _MSC_VER
-#	if __has_cpp_attribute( no_unique_address )
-#		define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
-#	else
-#		define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
-#	endif
+#    if __has_cpp_attribute( no_unique_address )
+#        define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#    else
+#        define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
+#    endif
 #elif defined( _MSC_VER ) && _MSC_VER >= 1928
 // MSVC
-#	define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#    define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #elif defined( __has_cpp_attribute ) && __has_cpp_attribute( no_unique_address ) >= 201803L
-#	if defined( __cpp_lib_no_unique_address ) && __cpp_lib_no_unique_address >= 201803L
-#		define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
-#	else
-#		define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
-#	endif
+#    if defined( __cpp_lib_no_unique_address ) && __cpp_lib_no_unique_address >= 201803L
+#        define NFX_CONTAINERS_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#    else
+#        define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
+#    endif
 #else
-#	define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
+#    define NFX_CONTAINERS_NO_UNIQUE_ADDRESS
 #endif

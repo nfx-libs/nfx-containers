@@ -23,7 +23,7 @@
  */
 
 /**
- * @file TESTS_SmallVector.cpp
+ * @file Tests_SmallVector.cpp
  * @brief Unit tests for SmallVector (Small Vector Optimization with stack storage)
  */
 

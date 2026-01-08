@@ -17,15 +17,15 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # --- Configure interface library ---
 target_include_directories(${PROJECT_NAME}
-	INTERFACE
-		$<BUILD_INTERFACE:${NFX_CONTAINERS_INCLUDE_DIR}>
-		$<INSTALL_INTERFACE:include>
+    INTERFACE
+        $<BUILD_INTERFACE:${NFX_CONTAINERS_INCLUDE_DIR}>
+        $<INSTALL_INTERFACE:include>
 )
 
 # Set interface compile features for C++20
 target_compile_features(${PROJECT_NAME}
-	INTERFACE
-		cxx_std_20
+    INTERFACE
+        cxx_std_20
 )
 
 #----------------------------------------------
@@ -33,6 +33,6 @@ target_compile_features(${PROJECT_NAME}
 #----------------------------------------------
 
 target_link_libraries(${PROJECT_NAME}
-	INTERFACE
-		nfx-hashing::nfx-hashing
+    INTERFACE
+        nfx-hashing::nfx-hashing
 )

@@ -42,51 +42,51 @@
 
 namespace nfx::containers
 {
-	//=====================================================================
-	// TransparentHashSet class
-	//=====================================================================
+    //=====================================================================
+    // TransparentHashSet class
+    //=====================================================================
 
-	/**
-	 * @brief Generic unordered set with transparent lookup support
-	 * @tparam TKey Key type (any hashable type)
-	 * @tparam Hash Hash functor (default: hashing::Hasher<uint32_t> for high-performance nfx hashing)
-	 * @tparam KeyEqual Equality comparator (default: std::equal_to<> for transparent lookup)
-	 * @see hashing::Hasher for universal high-performance hashing
-	 */
-	template <typename TKey,
-		typename Hash = hashing::Hasher<uint32_t>,
-		typename KeyEqual = std::equal_to<>>
-	class TransparentHashSet final : public std::unordered_set<TKey, Hash, KeyEqual>
-	{
-		using Base = std::unordered_set<TKey, Hash, KeyEqual>;
+    /**
+     * @brief Generic unordered set with transparent lookup support
+     * @tparam TKey Key type (any hashable type)
+     * @tparam Hash Hash functor (default: hashing::Hasher<uint32_t> for high-performance nfx hashing)
+     * @tparam KeyEqual Equality comparator (default: std::equal_to<> for transparent lookup)
+     * @see hashing::Hasher for universal high-performance hashing
+     */
+    template <typename TKey,
+        typename Hash = hashing::Hasher<uint32_t>,
+        typename KeyEqual = std::equal_to<>>
+    class TransparentHashSet final : public std::unordered_set<TKey, Hash, KeyEqual>
+    {
+        using Base = std::unordered_set<TKey, Hash, KeyEqual>;
 
-	public:
-		//----------------------------------------------
-		// Type aliases
-		//----------------------------------------------
+    public:
+        //----------------------------------------------
+        // Type aliases
+        //----------------------------------------------
 
-		/** @brief Type alias for key type */
-		using key_type = TKey;
+        /** @brief Type alias for key type */
+        using key_type = TKey;
 
-		/** @brief Type alias for value type (same as key_type for sets) */
-		using value_type = TKey;
+        /** @brief Type alias for value type (same as key_type for sets) */
+        using value_type = TKey;
 
-		/** @brief Type alias for hasher type */
-		using hasher = Hash;
+        /** @brief Type alias for hasher type */
+        using hasher = Hash;
 
-		/** @brief Type alias for key equality comparator */
-		using key_equal = KeyEqual;
+        /** @brief Type alias for key equality comparator */
+        using key_equal = KeyEqual;
 
-		/** @brief Type alias for size type */
-		using size_type = size_t;
+        /** @brief Type alias for size type */
+        using size_type = size_t;
 
-		/** @brief Type alias for difference type */
-		using difference_type = std::ptrdiff_t;
+        /** @brief Type alias for difference type */
+        using difference_type = std::ptrdiff_t;
 
-		//----------------------------------------------
-		// Inherited Constructors
-		//----------------------------------------------
+        //----------------------------------------------
+        // Inherited Constructors
+        //----------------------------------------------
 
-		using Base::Base;
-	};
+        using Base::Base;
+    };
 } // namespace nfx::containers

@@ -42,55 +42,55 @@
 
 namespace nfx::containers
 {
-	//=====================================================================
-	// TransparentHashMap class
-	//=====================================================================
+    //=====================================================================
+    // TransparentHashMap class
+    //=====================================================================
 
-	/**
-	 * @brief Generic unordered map with transparent lookup
-	 * @tparam TKey Key type
-	 * @tparam TValue Mapped value type
-	 * @tparam Hash Hash functor type (default: hashing::Hasher<uint32_t>)
-	 * @tparam KeyEqual Key equality comparator (default: std::equal_to<> for transparent comparison)
-	 */
-	template <typename TKey,
-		typename TValue,
-		typename Hash = hashing::Hasher<uint32_t>,
-		typename KeyEqual = std::equal_to<>>
-	class TransparentHashMap final : public std::unordered_map<TKey, TValue, Hash, KeyEqual>
-	{
-		using Base = std::unordered_map<TKey, TValue, Hash, KeyEqual>;
+    /**
+     * @brief Generic unordered map with transparent lookup
+     * @tparam TKey Key type
+     * @tparam TValue Mapped value type
+     * @tparam Hash Hash functor type (default: hashing::Hasher<uint32_t>)
+     * @tparam KeyEqual Key equality comparator (default: std::equal_to<> for transparent comparison)
+     */
+    template <typename TKey,
+        typename TValue,
+        typename Hash = hashing::Hasher<uint32_t>,
+        typename KeyEqual = std::equal_to<>>
+    class TransparentHashMap final : public std::unordered_map<TKey, TValue, Hash, KeyEqual>
+    {
+        using Base = std::unordered_map<TKey, TValue, Hash, KeyEqual>;
 
-	public:
-		//----------------------------------------------
-		// Type aliases
-		//----------------------------------------------
+    public:
+        //----------------------------------------------
+        // Type aliases
+        //----------------------------------------------
 
-		/** @brief Type alias for key type */
-		using key_type = TKey;
+        /** @brief Type alias for key type */
+        using key_type = TKey;
 
-		/** @brief Type alias for mapped value type */
-		using mapped_type = TValue;
+        /** @brief Type alias for mapped value type */
+        using mapped_type = TValue;
 
-		/** @brief Type alias for value type (pair<const Key, Value>) */
-		using value_type = std::pair<const TKey, TValue>;
+        /** @brief Type alias for value type (pair<const Key, Value>) */
+        using value_type = std::pair<const TKey, TValue>;
 
-		/** @brief Type alias for hasher type */
-		using hasher = Hash;
+        /** @brief Type alias for hasher type */
+        using hasher = Hash;
 
-		/** @brief Type alias for key equality comparator */
-		using key_equal = KeyEqual;
+        /** @brief Type alias for key equality comparator */
+        using key_equal = KeyEqual;
 
-		/** @brief Type alias for size type */
-		using size_type = size_t;
+        /** @brief Type alias for size type */
+        using size_type = size_t;
 
-		/** @brief Type alias for difference type */
-		using difference_type = std::ptrdiff_t;
+        /** @brief Type alias for difference type */
+        using difference_type = std::ptrdiff_t;
 
-		//----------------------------------------------
-		// Inherited Constructors
-		//----------------------------------------------
+        //----------------------------------------------
+        // Inherited Constructors
+        //----------------------------------------------
 
-		using Base::Base;
-	};
+        using Base::Base;
+    };
 } // namespace nfx::containers
