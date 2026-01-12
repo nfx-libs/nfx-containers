@@ -1,20 +1,13 @@
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 ### Added
 
-- **SmallVector**: Small vector optimization with stack storage and heap fallback
-
+- NIL
+- 
 ### Changed
 
-- Relaxed type constraints across all containers - no longer require default-constructible types
-
+- NIL
+- 
 ### Deprecated
 
 - NIL
@@ -30,6 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - NIL
+  
+## [0.2.0] - 2026-01-12
+
+### Added
+
+- **SmallVector**: Small vector optimization with stack storage and heap fallback
+
+### Changed
+
+- Relaxed type constraints across all containers - no longer require default-constructible types
+
+### Fixed
+
+- Implemented proper move semantics for FastHashMap and FastHashSet
 
 ## [0.1.1] - 2025-11-27
 
