@@ -1,13 +1,21 @@
+# Changelog
+
 ## [Unreleased]
 
 ### Added
 
-- NIL
-- 
+- **OrderedHashMap**: Insertion-order preserving hash map with Robin Hood hashing and doubly-linked list
+  - Hybrid hash table + intrusive doubly-linked list structure
+  - Guaranteed insertion-order iteration
+  - Bidirectional iterator support with operator++ and operator--
+  - O(1) average-case lookups, insertions, and deletions
+  - Heterogeneous lookup with zero-copy string operations
+  - Order-independent equality comparison
+  
 ### Changed
 
 - NIL
-- 
+  
 ### Deprecated
 
 - NIL

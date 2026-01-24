@@ -6,9 +6,6 @@ Project roadmap and task tracking for the nfx-containers library.
 
 - [ ] Add `FlatHashMap` and `FlatHashSet` containers (optimized for low load factors and extreme performance)
   - [ ] Tombstone handling for deletions
-- [ ] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches))
-  - [ ] Preserve insertion order during iteration
-  - [ ] Hybrid hash table + doubly-linked list structure
 - [ ] Add advanced STL methods
   - [ ] `extract()` method for node-handle-like semantics
   - [ ] `merge()` method for bulk transfer between containers
@@ -36,8 +33,13 @@ Project roadmap and task tracking for the nfx-containers library.
 
 ### In Progress
 
-- NIL
+- [ ] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches)
+  - [x] `OrderedHashMap` - Complete (header, implementation, samples, tests - 42/42 passing)
+  - [x] Preserve insertion order during iteration
+  - [x] Hybrid hash table + doubly-linked list structure
+  - [x] Bidirectional iterator support
+  - [ ] `OrderedHashSet` - Not started
 
 ### Done ✓
 
-- NIL
+- [x] `OrderedHashMap` container fully implemented and tested

@@ -47,6 +47,7 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 - **PerfectHashMap**: Perfect hash map using CHD algorithm for immutable datasets
 - **FastHashMap**: Robin Hood hash map with superior performance over `std::unordered_map`
 - **FastHashSet**: Robin Hood hash set with superior performance over `std::unordered_set`
+- **OrderedHashMap**: Insertion-order preserving hash map with bidirectional iterators
 - **TransparentHashMap**: Enhanced `std::unordered_map` with heterogeneous lookup
 - **TransparentHashSet**: Enhanced `std::unordered_set` with heterogeneous lookup
 - **SmallVector**: Small vector optimization with stack storage and automatic heap fallback
@@ -255,6 +256,23 @@ int main()
         std::cout << name << ": " << age << "\n";
     }
 
+    // OrderedHashMap - Insertion-order preserving hash map
+    OrderedHashMap<std::string, int> ordered;
+    ordered.insertOrAssign("third", 3);
+    ordered.insertOrAssign("first", 1);
+    ordered.insertOrAssign("second", 2);
+
+    // Guaranteed insertion-order iteration
+    for (const auto& [key, value] : ordered) {
+        std::cout << key << ": " << value << "\n";  // third, first, second
+    }
+
+    // Bidirectional iteration (unique to OrderedHashMap!)
+    for (auto it = --ordered.end(); it != ordered.begin(); --it) {
+        std::cout << it->first << " ";
+    }
+    std::cout << ordered.begin()->first << "\n";  // second, first, third
+
     // FastHashSet - Robin Hood hash set
     FastHashSet<std::string> names;
     names.insert("Alice");
@@ -304,6 +322,10 @@ Bob exists in the map
 Charlie: 35
 Bob: 25
 Alice: 30
+third: 3
+first: 1
+second: 2
+second first third
 two = 2
 Apple costs $1.99
 10 20 30
@@ -367,6 +389,7 @@ nfx-containers/
 │   ├── containers/              # Container implementations
 │   │   ├── FastHashMap.h        # Robin Hood hash map implementation
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
+│   │   ├── OrderedHashMap.h     # Insertion-order preserving hash map
 │   │   ├── PerfectHashMap.h     # Perfect hash map (CHD algorithm)
 │   │   ├── SmallVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
@@ -405,7 +428,7 @@ This project is licensed under the MIT License.
 
 ### Runtime Dependencies
 
-- **[nfx-hashing](https://github.com/nfx-libs/nfx-hashing)**: High-performance hashing library with hardware acceleration (MIT License) - **Required**
+- **[nfx-hashing](https://github.com/nfx-libs/nfx-hashing)**: High-performance hashing library with hardware acceleration (MIT License)
 
 ### Development Dependencies
 
@@ -416,4 +439,4 @@ All dependencies are automatically fetched via CMake FetchContent when building 
 
 ---
 
-_Updated on December 07, 2025_
+_Updated on January 24, 2026_

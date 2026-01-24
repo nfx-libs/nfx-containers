@@ -39,6 +39,7 @@ set(test_sources)
 list(APPEND test_sources
     Tests_FastHashMap.cpp
     Tests_FastHashSet.cpp
+    Tests_OrderedHashMap.cpp
     Tests_PerfectHashMap.cpp
     Tests_SmallVector.cpp
     Tests_TransparentHashMap.cpp
