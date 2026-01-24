@@ -48,6 +48,7 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 - **FastHashMap**: Robin Hood hash map with superior performance over `std::unordered_map`
 - **FastHashSet**: Robin Hood hash set with superior performance over `std::unordered_set`
 - **OrderedHashMap**: Insertion-order preserving hash map with bidirectional iterators
+- **OrderedHashSet**: Insertion-order preserving hash set with bidirectional iterators
 - **TransparentHashMap**: Enhanced `std::unordered_map` with heterogeneous lookup
 - **TransparentHashSet**: Enhanced `std::unordered_set` with heterogeneous lookup
 - **SmallVector**: Small vector optimization with stack storage and automatic heap fallback
@@ -99,20 +100,20 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 
 ```cmake
 # Development options
-option(NFX_CONTAINERS_BUILD_TESTS          "Build tests"                        OFF )
-option(NFX_CONTAINERS_BUILD_SAMPLES        "Build samples"                      OFF )
-option(NFX_CONTAINERS_BUILD_BENCHMARKS     "Build benchmarks"                   OFF )
-option(NFX_CONTAINERS_BUILD_DOCUMENTATION  "Build Doxygen documentation"        OFF )
+option(NFX_CONTAINERS_BUILD_TESTS         "Build tests"                       OFF)
+option(NFX_CONTAINERS_BUILD_SAMPLES       "Build samples"                     OFF)
+option(NFX_CONTAINERS_BUILD_BENCHMARKS    "Build benchmarks"                  OFF)
+option(NFX_CONTAINERS_BUILD_DOCUMENTATION "Build Doxygen documentation"       OFF)
 
 # Installation
-option(NFX_CONTAINERS_INSTALL_PROJECT      "Install project"                    OFF )
+option(NFX_CONTAINERS_INSTALL_PROJECT     "Install project"                   OFF)
 
 # Packaging
-option(NFX_CONTAINERS_PACKAGE_SOURCE       "Enable source package generation"   OFF )
-option(NFX_CONTAINERS_PACKAGE_ARCHIVE      "Enable TGZ/ZIP package generation"  OFF )
-option(NFX_CONTAINERS_PACKAGE_DEB          "Enable DEB package generation"      OFF )
-option(NFX_CONTAINERS_PACKAGE_RPM          "Enable RPM package generation"      OFF )
-option(NFX_CONTAINERS_PACKAGE_WIX          "Enable WiX MSI installer"           OFF )
+option(NFX_CONTAINERS_PACKAGE_SOURCE      "Enable source package generation"  OFF)
+option(NFX_CONTAINERS_PACKAGE_ARCHIVE     "Enable TGZ/ZIP package generation" OFF)
+option(NFX_CONTAINERS_PACKAGE_DEB         "Enable DEB package generation"     OFF)
+option(NFX_CONTAINERS_PACKAGE_RPM         "Enable RPM package generation"     OFF)
+option(NFX_CONTAINERS_PACKAGE_WIX         "Enable WiX MSI installer"          OFF)
 ```
 
 ### Using in Your Project

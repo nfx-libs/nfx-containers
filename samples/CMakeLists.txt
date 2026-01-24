@@ -20,6 +20,7 @@ list(APPEND sample_sources
     Sample_FastHashMap.cpp
     Sample_FastHashSet.cpp
     Sample_OrderedHashMap.cpp
+    Sample_OrderedHashSet.cpp
     Sample_PerfectHashMap.cpp
     Sample_TransparentHashMap.cpp
     Sample_TransparentHashSet.cpp

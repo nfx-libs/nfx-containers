@@ -831,5 +831,4 @@ namespace nfx::containers::test
         EXPECT_EQ( keys2[0], "a" );
         EXPECT_EQ( keys2[1], "b" );
     }
-
 } // namespace nfx::containers::test

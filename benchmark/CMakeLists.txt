@@ -20,6 +20,7 @@ list(APPEND benchmark_sources
     BM_FastHashMap.cpp
     BM_FastHashSet.cpp
     BM_OrderedHashMap.cpp
+    BM_OrderedHashSet.cpp
     BM_PerfectHashMap.cpp
     BM_TransparentHashMap.cpp
     BM_TransparentHashSet.cpp

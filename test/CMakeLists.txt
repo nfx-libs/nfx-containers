@@ -40,6 +40,7 @@ list(APPEND test_sources
     Tests_FastHashMap.cpp
     Tests_FastHashSet.cpp
     Tests_OrderedHashMap.cpp
+    Tests_OrderedHashSet.cpp
     Tests_PerfectHashMap.cpp
     Tests_SmallVector.cpp
     Tests_TransparentHashMap.cpp

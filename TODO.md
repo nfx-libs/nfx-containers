@@ -33,13 +33,8 @@ Project roadmap and task tracking for the nfx-containers library.
 
 ### In Progress
 
-- [ ] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches)
-  - [x] `OrderedHashMap` - Complete (header, implementation, samples, tests - 42/42 passing)
-  - [x] Preserve insertion order during iteration
-  - [x] Hybrid hash table + doubly-linked list structure
-  - [x] Bidirectional iterator support
-  - [ ] `OrderedHashSet` - Not started
+- NIL
 
 ### Done ✓
 
-- [x] `OrderedHashMap` container fully implemented and tested
+- [x] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches))

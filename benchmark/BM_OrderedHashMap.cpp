@@ -322,7 +322,7 @@ namespace nfx::containers::benchmark
             for ( const auto& [key, value] : map )
             {
                 sum += value;
-                ::benchmark::DoNotOptimize( key );
+                ::benchmark::DoNotOptimize( key.data() );
             }
             ::benchmark::DoNotOptimize( sum );
         }
@@ -342,7 +342,7 @@ namespace nfx::containers::benchmark
             for ( const auto& [key, value] : map )
             {
                 sum += value;
-                ::benchmark::DoNotOptimize( key );
+                ::benchmark::DoNotOptimize( key.data() );
             }
             ::benchmark::DoNotOptimize( sum );
         }
@@ -366,7 +366,7 @@ namespace nfx::containers::benchmark
             for ( auto it = --map.end(); it != map.begin(); --it )
             {
                 sum += it->second;
-                ::benchmark::DoNotOptimize( it->first );
+                ::benchmark::DoNotOptimize( it->first.data() );
             }
             sum += map.begin()->second;
             ::benchmark::DoNotOptimize( sum );
@@ -728,4 +728,3 @@ BENCHMARK( nfx::containers::benchmark::BM_OrderedHashMap_ComplexStruct_1000 )->R
 BENCHMARK( nfx::containers::benchmark::BM_std_unordered_map_ComplexStruct_1000 )->Repetitions( 3 );
 
 BENCHMARK_MAIN();
-
