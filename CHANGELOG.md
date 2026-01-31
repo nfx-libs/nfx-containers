@@ -8,7 +8,8 @@
   
 ### Changed
 
-- NIL
+- Bump nfx-hashing from 0.1.1 to 0.1.2
+- Bump Google Benchmark from 1.9.4 to 1.9.5
   
 ### Deprecated
 
