@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(nfx-containers
-    VERSION 0.3.0
+    VERSION 0.3.1
     DESCRIPTION "Modern C++20 header-only library providing high-performance hash containers with Robin Hood and perfect hashing"
     HOMEPAGE_URL "https://github.com/nfx-libs/nfx-containers"
     LANGUAGES CXX

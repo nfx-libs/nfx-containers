@@ -8,9 +8,8 @@
   
 ### Changed
 
-- Bump nfx-hashing from 0.1.1 to 0.1.2
-- Bump Google Benchmark from 1.9.4 to 1.9.5
-  
+- NIL
+
 ### Deprecated
 
 - NIL
@@ -26,6 +25,13 @@
 ### Security
 
 - NIL
+
+## [0.3.1] - 2026-01-31
+
+### Changed
+
+- Bump nfx-hashing from 0.1.1 to 0.1.2
+- Bump Google Benchmark from 1.9.4 to 1.9.5
 
 ## [0.3.0] - 2026-01-27
 
