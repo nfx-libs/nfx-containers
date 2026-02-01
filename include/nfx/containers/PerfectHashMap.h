@@ -238,14 +238,14 @@ namespace nfx::containers
         //----------------------------------------------
 
         /**
-         * @brief Get the number of elements in the map
-         * @return Number of key-value pairs stored in the map
+         * @brief Get the total size of the hash table
+         * @return Total number of slots in the hash table (including empty slots)
          * @note This function is marked [[nodiscard]] - the return value should not be ignored
          */
         [[nodiscard]] inline size_type size() const noexcept;
 
         /**
-         * @brief Get the number of elements in the map (alias for size)
+         * @brief Get the number of elements in the map
          * @return Number of key-value pairs stored in the map
          * @note This function is marked [[nodiscard]] - the return value should not be ignored
          */
