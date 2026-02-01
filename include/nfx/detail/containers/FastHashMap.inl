@@ -814,7 +814,6 @@ namespace nfx::containers
     inline typename FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::reference
     FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::operator*() const
     {
-        // return reinterpret_cast<reference>( *m_bucket );
         return *std::launder( reinterpret_cast<pointer>( &m_bucket->data.value() ) );
     }
 
@@ -905,7 +904,6 @@ namespace nfx::containers
     inline typename FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::reference
     FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator*() const
     {
-        // return reinterpret_cast<reference>( *m_bucket );
         return *std::launder( reinterpret_cast<pointer>( &m_bucket->data.value() ) );
     }
 
