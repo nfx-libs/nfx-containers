@@ -9,7 +9,7 @@
 ### Changed
 
 - NIL
-
+  
 ### Deprecated
 
 - NIL
@@ -25,6 +25,16 @@
 ### Security
 
 - NIL
+
+## [0.3.2] - 2026-02-03
+
+### Changed
+
+- Removed commented-out code from FastHashMap implementation
+  
+### Fixed
+
+- Fixed PerfectHashMap documentation for `size()` and `count()` methods
 
 ## [0.3.1] - 2026-01-31
 
