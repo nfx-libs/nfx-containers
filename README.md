@@ -10,19 +10,19 @@
 
 [![Linux GCC](https://img.shields.io/github/actions/workflow/status/nfx-libs/nfx-containers/build-linux-gcc.yml?branch=main&label=Linux%20GCC&style=flat-square)](https://github.com/nfx-libs/nfx-containers/actions/workflows/build-linux-gcc.yml) [![Linux Clang](https://img.shields.io/github/actions/workflow/status/nfx-libs/nfx-containers/build-linux-clang.yml?branch=main&label=Linux%20Clang&style=flat-square)](https://github.com/nfx-libs/nfx-containers/actions/workflows/build-linux-clang.yml) [![Windows MinGW](https://img.shields.io/github/actions/workflow/status/nfx-libs/nfx-containers/build-windows-mingw.yml?branch=main&label=Windows%20MinGW&style=flat-square)](https://github.com/nfx-libs/nfx-containers/actions/workflows/build-windows-mingw.yml) [![Windows MSVC](https://img.shields.io/github/actions/workflow/status/nfx-libs/nfx-containers/build-windows-msvc.yml?branch=main&label=Windows%20MSVC&style=flat-square)](https://github.com/nfx-libs/nfx-containers/actions/workflows/build-windows-msvc.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/nfx-libs/nfx-containers/codeql.yml?branch=main&label=CodeQL&style=flat-square)](https://github.com/nfx-libs/nfx-containers/actions/workflows/codeql.yml)
 
-> A modern C++20 header-only library providing high-performance hash containers (maps and sets) with Robin Hood hashing and perfect hashing (CHD algorithm)
+> A modern C++20 header-only library providing high-performance hash containers (maps and sets) with Robin Hood hashing and displacement-based perfect hashing
 
 ## Overview
 
 nfx-containers is a modern C++20 header-only library providing high-performance associative containers optimized for speed and memory efficiency.
-It offers Robin Hood hash maps and sets for general use, perfect hash maps using the CHD (Compress, Hash and Displace) algorithm for static data, and specialized string containers with zero-copy heterogeneous lookup capabilities.
+It offers Robin Hood hash maps and sets for general use, displacement-based perfect hash maps for static data, and specialized string containers with zero-copy heterogeneous lookup capabilities.
 
 ## Key Features
 
 ### 📦 High-Performance Hash Containers
 
 - **Robin Hood Hashing**: Open addressing with backward shift deletion for optimal performance in maps and sets
-- **Perfect Hashing (CHD)**: Compile-time perfect hash maps for static data with O(1) guaranteed lookups
+- **Perfect Hashing**: Displacement-based perfect hash maps for static data with O(1) guaranteed lookups
 - **Cache-Optimized Layout**: Contiguous memory storage for excellent cache locality
 - **Heterogeneous Lookup**: Zero-copy lookups with compatible types (string_view, const char\*, integers, enums, etc.)
 - **Template Support**: Generic key-value and key-only storage with customizable hash functors
@@ -44,7 +44,7 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 
 ### ✅ Container Types
 
-- **PerfectHashMap**: Perfect hash map using CHD algorithm for immutable datasets
+- **PerfectHashMap**: Displacement-based perfect hash map for immutable datasets
 - **FastHashMap**: Robin Hood hash map with superior performance over `std::unordered_map`
 - **FastHashSet**: Robin Hood hash set with superior performance over `std::unordered_set`
 - **OrderedHashMap**: Insertion-order preserving hash map with bidirectional iterators
@@ -391,7 +391,7 @@ nfx-containers/
 │   │   ├── FastHashMap.h        # Robin Hood hash map implementation
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
 │   │   ├── OrderedHashMap.h     # Insertion-order preserving hash map
-│   │   ├── PerfectHashMap.h     # Perfect hash map (CHD algorithm)
+│   │   ├── PerfectHashMap.h     # Displacement-based perfect hash map
 │   │   ├── StackVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
 │   │   └── TransparentHashSet.h # Enhanced unordered_set wrapper
@@ -405,7 +405,7 @@ nfx-containers/
 nfx-containers is optimized for high performance with:
 
 - **Robin Hood Hashing**: Backward shift deletion reduces clustering and improves lookup times
-- **Perfect Hashing (CHD)**: O(1) guaranteed lookups with zero collisions for static data
+- **Perfect Hashing**: O(1) guaranteed lookups with zero collisions for static data using displacement-based algorithm
 - **Cache-Friendly Layout**: Contiguous memory storage improves cache locality
 - **Zero-Copy Lookups**: Heterogeneous lookup with compatible types eliminates temporary allocations
 - **Hardware Acceleration**: SSE4.2 CRC32 instructions for high-performance hashing when available

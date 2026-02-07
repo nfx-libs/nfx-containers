@@ -24,9 +24,9 @@
 
 /**
  * @file PerfectHashMap.h
- * @brief Perfect hash map using CHD (Compress, Hash, Displace) algorithm
- * @details Provides O(1) guaranteed lookups for immutable datasets with minimal memory overhead
- *          using the CHD perfect hashing algorithm
+ * @brief Perfect hash map using displacement-based perfect hashing
+ * @details Provides O(1) guaranteed lookups for immutable datasets with zero collision overhead.
+ *          Uses a displacement-based algorithm with seed mixing to achieve perfect hashing.
  */
 
 #pragma once
@@ -50,7 +50,7 @@ namespace nfx::containers
     //=====================================================================
 
     /**
-     * @brief Perfect hash map using CHD (Compress, Hash, Displace) algorithm for immutable datasets
+     * @brief Perfect hash map using displacement-based perfect hashing for immutable datasets
      * @tparam TKey Key type (supports heterogeneous lookup for compatible types)
      * @tparam TValue Mapped value type
      * @tparam HashType Hash type - either uint32_t or uint64_t (default: uint32_t)
@@ -58,10 +58,20 @@ namespace nfx::containers
      * @tparam Hasher Hash functor type (default: hashing::Hasher<HashType, Seed>)
      * @tparam KeyEqual Key equality comparator (default: std::equal_to<> for transparent comparison)
      *
-     * @details Provides O(1) guaranteed lookups with minimal memory overhead using the CHD algorithm.
-     *          CHD (Compress, Hash, Displace) creates a perfect hash function where each key maps
-     *          to a unique table position with no collisions, enabling true constant-time lookups.
-     * @note The map is immutable after construction. Use FastHashMap for mutable scenarios.
+     * @details Provides O(1) guaranteed lookups with zero collision overhead using displacement-based
+     *          perfect hashing. The algorithm creates a perfect hash function where each key maps to a
+     *          unique table position with no collisions, enabling true constant-time lookups.
+     *
+     *          Construction uses bucket-based displacement with seed mixing to resolve collisions:
+     *          - Keys are distributed into buckets by their hash value
+     *          - Buckets are processed largest-first to minimize displacement attempts
+     *          - Each multi-item bucket finds a unique seed that displaces items to empty slots
+     *          - Single-item buckets are placed directly without displacement
+     *
+     *          Memory overhead: Table size is 2x the number of keys for efficient seed finding.
+     *          This trade-off provides guaranteed O(1) lookups with simple, maintainable code.
+     *
+     * @note The map is immutable after construction. Use HashMap for mutable scenarios.
      */
     template <typename TKey,
         typename TValue,
@@ -126,7 +136,7 @@ namespace nfx::containers
          * @brief Constructs a perfect hash map from a vector of key-value pairs
          * @param items Vector of key-value pairs (moved into the map)
          * @throws std::invalid_argument if duplicate keys are detected in items
-         * @details Uses CHD (Compress, Hash, Displace) algorithm to build a perfect hash table.
+         * @details Uses displacement-based perfect hashing to build a collision-free hash table.
          *          Construction is O(n) expected time. The resulting map is immutable.
          */
         inline explicit PerfectHashMap( std::vector<std::pair<TKey, TValue>>&& items );

@@ -24,9 +24,9 @@
 
 /**
  * @file Sample_PerfectHashMap.cpp
- * @brief Demonstrates PerfectHashMap usage with CHD perfect hashing
+ * @brief Demonstrates PerfectHashMap usage with displacement-based perfect hashing
  * @details This sample shows how to use PerfectHashMap for immutable key-value storage
- *          with guaranteed O(1) lookup and minimal memory overhead
+ *          with guaranteed O(1) lookup and zero collision overhead
  */
 
 #include <iostream>
@@ -337,7 +337,7 @@ int main()
 
         // Verify lookup
         std::cout << "large[5000]: " << large.at( 5000 ) << " (expected: 25000000)\n";
-        std::cout << "Note: O(1) guaranteed lookup with CHD algorithm\n";
+        std::cout << "Note: O(1) guaranteed lookup with perfect hashing\n";
 
         std::cout << "\n";
     }

@@ -25,8 +25,8 @@
 /**
  * @file PerfectHashMap.inl
  * @brief Template implementation file for PerfectHashMap perfect hashing container
- * @details Contains template method implementations for CHD (Compress, Hash, Displace) algorithm
- *          providing O(1) guaranteed lookups for immutable datasets with minimal memory overhead
+ * @details Contains template method implementations for displacement-based perfect hashing algorithm
+ *          providing O(1) guaranteed lookups for immutable datasets with zero collision overhead
  */
 
 #include <algorithm>
@@ -62,7 +62,7 @@ namespace nfx::containers
             return;
         }
 
-        // O(n) duplicate check to prevent infinite loops during CHD construction
+        // O(n) duplicate check to prevent infinite loops during perfect hash construction
         std::unordered_set<TKey, hasher, key_equal> seen( itemCount, m_hasher, m_keyEqual );
         for ( size_t i = 0; i < itemCount; ++i )
         {

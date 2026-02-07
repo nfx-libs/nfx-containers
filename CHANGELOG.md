@@ -102,7 +102,7 @@
   - Transparent heterogeneous comparison support
   - Optimal cache-friendly memory layout
 
-- **PerfectHashMap**: Perfect hash map using CHD (Compress, Hash, Displace) algorithm for immutable datasets
+- **PerfectHashMap**: Displacement-based perfect hash map for immutable datasets
 
   - O(1) guaranteed lookups with minimal memory overhead
   - Heterogeneous lookup support
