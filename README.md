@@ -391,7 +391,7 @@ nfx-containers/
 │   │   ├── FastHashMap.h        # Robin Hood hash map implementation
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
 │   │   ├── OrderedHashMap.h     # Insertion-order preserving hash map
-│   │   ├── PerfectHashMap.h     # Displacement-based perfect hash map
+│   │   ├── PerfectHashMap.h     # Displacement-based perfect hash map (inspired by DNV Vista SDK)
 │   │   ├── StackVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
 │   │   └── TransparentHashSet.h # Enhanced unordered_set wrapper
@@ -437,6 +437,10 @@ This project is licensed under the MIT License.
 - **[Google Benchmark](https://github.com/google/benchmark)**: Performance benchmarking framework (Apache 2.0 License) - Development only
 
 All dependencies are automatically fetched via CMake FetchContent when building the library, tests, or benchmarks.
+
+## Acknowledgments
+
+- **PerfectHashMap** algorithm inspired by [DNV Vista SDK's ChdDictionary](https://github.com/dnv-opensource/vista-sdk) (MIT License)
 
 ---
 

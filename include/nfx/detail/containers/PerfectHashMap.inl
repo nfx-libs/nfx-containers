@@ -26,7 +26,10 @@
  * @file PerfectHashMap.inl
  * @brief Template implementation file for PerfectHashMap perfect hashing container
  * @details Contains template method implementations for displacement-based perfect hashing algorithm
- *          providing O(1) guaranteed lookups for immutable datasets with zero collision overhead
+ *          providing O(1) guaranteed lookups for immutable datasets with zero collision overhead.
+ *
+ *          Algorithm inspired by DNV Vista SDK's ChdDictionary implementation:
+ *          https://github.com/dnv-opensource/vista-sdk (MIT License)
  */
 
 #include <algorithm>

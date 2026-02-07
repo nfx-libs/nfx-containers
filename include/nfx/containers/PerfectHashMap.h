@@ -27,6 +27,9 @@
  * @brief Perfect hash map using displacement-based perfect hashing
  * @details Provides O(1) guaranteed lookups for immutable datasets with zero collision overhead.
  *          Uses a displacement-based algorithm with seed mixing to achieve perfect hashing.
+ *
+ *          Algorithm inspired by DNV Vista SDK's ChdDictionary implementation:
+ *          https://github.com/dnv-opensource/vista-sdk (MIT License)
  */
 
 #pragma once
