@@ -51,7 +51,7 @@ It offers Robin Hood hash maps and sets for general use, perfect hash maps using
 - **OrderedHashSet**: Insertion-order preserving hash set with bidirectional iterators
 - **TransparentHashMap**: Enhanced `std::unordered_map` with heterogeneous lookup
 - **TransparentHashSet**: Enhanced `std::unordered_set` with heterogeneous lookup
-- **SmallVector**: Small vector optimization with stack storage and automatic heap fallback
+- **StackVector**: Small vector optimization with stack storage and automatic heap fallback
 
 ### 🌐 Heterogeneous Lookup Optimization
 
@@ -299,8 +299,8 @@ int main()
         std::cout << "Apple costs $" << it->second << "\n";
     }
 
-    // SmallVector - Stack-optimized vector for small collections
-    SmallVector<int, 4> numbers;  // Stores up to 4 ints on stack
+    // StackVector - Stack-optimized vector for small collections
+    StackVector<int, 4> numbers;  // Stores up to 4 ints on stack
     numbers.push_back(10);
     numbers.push_back(20);
     numbers.push_back(30);
@@ -392,7 +392,7 @@ nfx-containers/
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
 │   │   ├── OrderedHashMap.h     # Insertion-order preserving hash map
 │   │   ├── PerfectHashMap.h     # Perfect hash map (CHD algorithm)
-│   │   ├── SmallVector.h        # Small vector optimization with stack storage
+│   │   ├── StackVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
 │   │   └── TransparentHashSet.h # Enhanced unordered_set wrapper
 │   └── detail/                  # Implementation details

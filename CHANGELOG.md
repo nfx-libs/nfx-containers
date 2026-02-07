@@ -8,7 +8,7 @@
   
 ### Changed
 
-- NIL
+- Renamed **SmallVector** to **StackVector**
   
 ### Deprecated
 

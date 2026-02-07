@@ -23,8 +23,8 @@
  */
 
 /**
- * @file Tests_SmallVector.cpp
- * @brief Unit tests for SmallVector (Small Vector Optimization with stack storage)
+ * @file Tests_StackVector.cpp
+ * @brief Unit tests for StackVector (Small Vector Optimization with stack storage)
  */
 
 #include <gtest/gtest.h>
@@ -35,7 +35,7 @@
 #include <utility>
 #include <vector>
 
-#include <nfx/containers/SmallVector.h>
+#include <nfx/containers/StackVector.h>
 
 namespace nfx::containers::test
 {
@@ -43,17 +43,17 @@ namespace nfx::containers::test
     // Constructor tests
     //=====================================================================
 
-    TEST( SmallVectorTests, DefaultConstructor_Empty )
+    TEST( StackVectorTests, DefaultConstructor_Empty )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         EXPECT_EQ( vec.size(), 0 );
         EXPECT_TRUE( vec.isEmpty() );
         EXPECT_EQ( vec.capacity(), 4 );
     }
 
-    TEST( SmallVectorTests, DefaultConstructor_StringType )
+    TEST( StackVectorTests, DefaultConstructor_StringType )
     {
-        SmallVector<std::string, 8> vec;
+        StackVector<std::string, 8> vec;
         EXPECT_EQ( vec.size(), 0 );
         EXPECT_TRUE( vec.isEmpty() );
         EXPECT_EQ( vec.capacity(), 8 );
@@ -63,9 +63,9 @@ namespace nfx::containers::test
     // Push back operations - Stack storage
     //=====================================================================
 
-    TEST( SmallVectorTests, PushBack_StaysOnStack )
+    TEST( StackVectorTests, PushBack_StaysOnStack )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
 
         vec.push_back( 10 );
         vec.push_back( 20 );
@@ -78,9 +78,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[2], 30 );
     }
 
-    TEST( SmallVectorTests, PushBack_MoveSemantics )
+    TEST( StackVectorTests, PushBack_MoveSemantics )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
 
         std::string s1 = "hello";
         std::string s2 = "world";
@@ -93,9 +93,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1], "world" );
     }
 
-    TEST( SmallVectorTests, PushBack_FillsStack )
+    TEST( StackVectorTests, PushBack_FillsStack )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         vec.push_back( 1 );
         vec.push_back( 2 );
@@ -112,9 +112,9 @@ namespace nfx::containers::test
     // Heap transition tests
     //=====================================================================
 
-    TEST( SmallVectorTests, HeapTransition_ExceedsStackCapacity )
+    TEST( StackVectorTests, HeapTransition_ExceedsStackCapacity )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         // Fill stack
         for ( int i = 0; i < 4; ++i )
@@ -137,9 +137,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, HeapTransition_GrowthStrategy )
+    TEST( StackVectorTests, HeapTransition_GrowthStrategy )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         for ( int i = 0; i < 4; ++i )
         {
@@ -152,9 +152,9 @@ namespace nfx::containers::test
         EXPECT_GE( vec.capacity(), 8 );
     }
 
-    TEST( SmallVectorTests, HeapTransition_StringData )
+    TEST( StackVectorTests, HeapTransition_StringData )
     {
-        SmallVector<std::string, 2> vec;
+        StackVector<std::string, 2> vec;
 
         vec.push_back( "first" );
         vec.push_back( "second" );
@@ -173,9 +173,9 @@ namespace nfx::containers::test
     // Emplace back operations
     //=====================================================================
 
-    TEST( SmallVectorTests, EmplaceBack_StackStorage )
+    TEST( StackVectorTests, EmplaceBack_StackStorage )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
 
         vec.emplace_back( "hello" );
         vec.emplace_back( 5, 'x' ); // "xxxxx"
@@ -185,9 +185,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1], "xxxxx" );
     }
 
-    TEST( SmallVectorTests, EmplaceBack_HeapStorage )
+    TEST( StackVectorTests, EmplaceBack_HeapStorage )
     {
-        SmallVector<std::pair<int, std::string>, 2> vec;
+        StackVector<std::pair<int, std::string>, 2> vec;
 
         vec.emplace_back( 1, "one" );
         vec.emplace_back( 2, "two" );
@@ -202,9 +202,9 @@ namespace nfx::containers::test
     // Element access tests
     //=====================================================================
 
-    TEST( SmallVectorTests, OperatorSubscript_ReadWrite )
+    TEST( StackVectorTests, OperatorSubscript_ReadWrite )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 10 );
         vec.push_back( 20 );
 
@@ -218,18 +218,18 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1], 200 );
     }
 
-    TEST( SmallVectorTests, OperatorSubscript_ConstAccess )
+    TEST( StackVectorTests, OperatorSubscript_ConstAccess )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 42 );
 
         const auto& cvec = vec;
         EXPECT_EQ( cvec[0], 42 );
     }
 
-    TEST( SmallVectorTests, Back_AccessLastElement )
+    TEST( StackVectorTests, Back_AccessLastElement )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -240,18 +240,18 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.back(), 99 );
     }
 
-    TEST( SmallVectorTests, Back_ConstAccess )
+    TEST( StackVectorTests, Back_ConstAccess )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "test" );
 
         const auto& cvec = vec;
         EXPECT_EQ( cvec.back(), "test" );
     }
 
-    TEST( SmallVectorTests, Front_AccessFirstElement )
+    TEST( StackVectorTests, Front_AccessFirstElement )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 10 );
         vec.push_back( 20 );
         vec.push_back( 30 );
@@ -262,9 +262,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.front(), 100 );
     }
 
-    TEST( SmallVectorTests, Front_ConstAccess )
+    TEST( StackVectorTests, Front_ConstAccess )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "first" );
         vec.push_back( "second" );
 
@@ -272,9 +272,9 @@ namespace nfx::containers::test
         EXPECT_EQ( cvec.front(), "first" );
     }
 
-    TEST( SmallVectorTests, Data_RawPointerAccess )
+    TEST( StackVectorTests, Data_RawPointerAccess )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -292,9 +292,9 @@ namespace nfx::containers::test
     // Capacity tests
     //=====================================================================
 
-    TEST( SmallVectorTests, Size_TracksElementCount )
+    TEST( StackVectorTests, Size_TracksElementCount )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
         EXPECT_EQ( vec.size(), 0 );
 
         vec.push_back( 1 );
@@ -307,9 +307,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.size(), 3 );
     }
 
-    TEST( SmallVectorTests, Empty_DetectsEmptyState )
+    TEST( StackVectorTests, Empty_DetectsEmptyState )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         EXPECT_TRUE( vec.isEmpty() );
 
         vec.push_back( 1 );
@@ -319,9 +319,9 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec.isEmpty() );
     }
 
-    TEST( SmallVectorTests, Capacity_StackMode )
+    TEST( StackVectorTests, Capacity_StackMode )
     {
-        SmallVector<int, 16> vec;
+        StackVector<int, 16> vec;
         EXPECT_EQ( vec.capacity(), 16 );
 
         for ( int i = 0; i < 10; ++i )
@@ -332,9 +332,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.capacity(), 16 ); // Still on stack
     }
 
-    TEST( SmallVectorTests, Capacity_HeapMode )
+    TEST( StackVectorTests, Capacity_HeapMode )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         EXPECT_EQ( vec.capacity(), 4 );
 
         for ( int i = 0; i < 5; ++i )
@@ -345,9 +345,9 @@ namespace nfx::containers::test
         EXPECT_GT( vec.capacity(), 4 ); // On heap now
     }
 
-    TEST( SmallVectorTests, Reserve_PreallocateHeap )
+    TEST( StackVectorTests, Reserve_PreallocateHeap )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         vec.reserve( 100 );
 
@@ -356,9 +356,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.size(), 0 );
     }
 
-    TEST( SmallVectorTests, Reserve_NoEffectWhenSmall )
+    TEST( StackVectorTests, Reserve_NoEffectWhenSmall )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
 
         vec.reserve( 4 ); // Less than stack capacity
 
@@ -369,9 +369,9 @@ namespace nfx::containers::test
     // Iterator tests
     //=====================================================================
 
-    TEST( SmallVectorTests, Iterator_BasicIteration )
+    TEST( StackVectorTests, Iterator_BasicIteration )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 10 );
         vec.push_back( 20 );
         vec.push_back( 30 );
@@ -388,9 +388,9 @@ namespace nfx::containers::test
         EXPECT_EQ( values[2], 30 );
     }
 
-    TEST( SmallVectorTests, Iterator_EmptyVector )
+    TEST( StackVectorTests, Iterator_EmptyVector )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         EXPECT_EQ( vec.begin(), vec.end() );
 
@@ -402,9 +402,9 @@ namespace nfx::containers::test
         EXPECT_EQ( count, 0 );
     }
 
-    TEST( SmallVectorTests, Iterator_ConstIteration )
+    TEST( StackVectorTests, Iterator_ConstIteration )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "a" );
         vec.push_back( "b" );
         vec.push_back( "c" );
@@ -423,9 +423,9 @@ namespace nfx::containers::test
         EXPECT_EQ( values[2], "c" );
     }
 
-    TEST( SmallVectorTests, Iterator_HeapStorage )
+    TEST( StackVectorTests, Iterator_HeapStorage )
     {
-        SmallVector<int, 2> vec;
+        StackVector<int, 2> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 ); // Transition to heap
@@ -446,9 +446,9 @@ namespace nfx::containers::test
     // Clear operation
     //=====================================================================
 
-    TEST( SmallVectorTests, Clear_StackStorage )
+    TEST( StackVectorTests, Clear_StackStorage )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -461,9 +461,9 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec.isEmpty() );
     }
 
-    TEST( SmallVectorTests, Clear_HeapStorage )
+    TEST( StackVectorTests, Clear_HeapStorage )
     {
-        SmallVector<int, 2> vec;
+        StackVector<int, 2> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 ); // Heap
@@ -474,9 +474,9 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec.isEmpty() );
     }
 
-    TEST( SmallVectorTests, Clear_StringDestruction )
+    TEST( StackVectorTests, Clear_StringDestruction )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "test1" );
         vec.push_back( "test2" );
 
@@ -495,9 +495,9 @@ namespace nfx::containers::test
     // Pop back operation
     //=====================================================================
 
-    TEST( SmallVectorTests, PopBack_StackStorage )
+    TEST( StackVectorTests, PopBack_StackStorage )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -515,9 +515,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.back(), 1 );
     }
 
-    TEST( SmallVectorTests, PopBack_HeapStorage )
+    TEST( StackVectorTests, PopBack_HeapStorage )
     {
-        SmallVector<int, 2> vec;
+        StackVector<int, 2> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 ); // Heap
@@ -531,9 +531,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.back(), 3 );
     }
 
-    TEST( SmallVectorTests, PopBack_StringDestruction )
+    TEST( StackVectorTests, PopBack_StringDestruction )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "one" );
         vec.push_back( "two" );
         vec.push_back( "three" );
@@ -548,10 +548,10 @@ namespace nfx::containers::test
     // Comparison operator tests
     //=====================================================================
 
-    TEST( SmallVectorTests, Equality_IdenticalVectors )
+    TEST( StackVectorTests, Equality_IdenticalVectors )
     {
-        SmallVector<int, 4> vec1;
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec1;
+        StackVector<int, 4> vec2;
 
         vec1.push_back( 1 );
         vec1.push_back( 2 );
@@ -565,10 +565,10 @@ namespace nfx::containers::test
         EXPECT_FALSE( vec1 != vec2 );
     }
 
-    TEST( SmallVectorTests, Equality_DifferentValues )
+    TEST( StackVectorTests, Equality_DifferentValues )
     {
-        SmallVector<int, 4> vec1;
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec1;
+        StackVector<int, 4> vec2;
 
         vec1.push_back( 1 );
         vec1.push_back( 2 );
@@ -580,10 +580,10 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec1 != vec2 );
     }
 
-    TEST( SmallVectorTests, Equality_DifferentSizes )
+    TEST( StackVectorTests, Equality_DifferentSizes )
     {
-        SmallVector<int, 4> vec1;
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec1;
+        StackVector<int, 4> vec2;
 
         vec1.push_back( 1 );
         vec1.push_back( 2 );
@@ -594,10 +594,10 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec1 != vec2 );
     }
 
-    TEST( SmallVectorTests, Equality_EmptyVectors )
+    TEST( StackVectorTests, Equality_EmptyVectors )
     {
-        SmallVector<int, 4> vec1;
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec1;
+        StackVector<int, 4> vec2;
 
         EXPECT_TRUE( vec1 == vec2 );
         EXPECT_FALSE( vec1 != vec2 );
@@ -607,14 +607,14 @@ namespace nfx::containers::test
     // Move semantics tests
     //=====================================================================
 
-    TEST( SmallVectorTests, MoveConstructor_StackStorage )
+    TEST( StackVectorTests, MoveConstructor_StackStorage )
     {
-        SmallVector<int, 4> vec1;
+        StackVector<int, 4> vec1;
         vec1.push_back( 10 );
         vec1.push_back( 20 );
         vec1.push_back( 30 );
 
-        SmallVector<int, 4> vec2( std::move( vec1 ) );
+        StackVector<int, 4> vec2( std::move( vec1 ) );
 
         EXPECT_EQ( vec2.size(), 3 );
         EXPECT_EQ( vec2[0], 10 );
@@ -626,14 +626,14 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec1.isEmpty() );
     }
 
-    TEST( SmallVectorTests, MoveConstructor_HeapStorage )
+    TEST( StackVectorTests, MoveConstructor_HeapStorage )
     {
-        SmallVector<int, 2> vec1;
+        StackVector<int, 2> vec1;
         vec1.push_back( 1 );
         vec1.push_back( 2 );
         vec1.push_back( 3 ); // Heap
 
-        SmallVector<int, 2> vec2( std::move( vec1 ) );
+        StackVector<int, 2> vec2( std::move( vec1 ) );
 
         EXPECT_EQ( vec2.size(), 3 );
         EXPECT_EQ( vec2[0], 1 );
@@ -643,13 +643,13 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec1.isEmpty() );
     }
 
-    TEST( SmallVectorTests, MoveAssignment_StackToStack )
+    TEST( StackVectorTests, MoveAssignment_StackToStack )
     {
-        SmallVector<int, 4> vec1;
+        StackVector<int, 4> vec1;
         vec1.push_back( 10 );
         vec1.push_back( 20 );
 
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec2;
         vec2.push_back( 99 );
 
         vec2 = std::move( vec1 );
@@ -662,14 +662,14 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec1.isEmpty() );
     }
 
-    TEST( SmallVectorTests, MoveAssignment_HeapToHeap )
+    TEST( StackVectorTests, MoveAssignment_HeapToHeap )
     {
-        SmallVector<int, 2> vec1;
+        StackVector<int, 2> vec1;
         vec1.push_back( 1 );
         vec1.push_back( 2 );
         vec1.push_back( 3 );
 
-        SmallVector<int, 2> vec2;
+        StackVector<int, 2> vec2;
         vec2.push_back( 7 );
         vec2.push_back( 8 );
         vec2.push_back( 9 );
@@ -687,9 +687,9 @@ namespace nfx::containers::test
     // Edge cases and stress tests
     //=====================================================================
 
-    TEST( SmallVectorTests, EdgeCase_SingleElement )
+    TEST( StackVectorTests, EdgeCase_SingleElement )
     {
-        SmallVector<int, 1> vec;
+        StackVector<int, 1> vec;
 
         vec.push_back( 42 );
 
@@ -706,9 +706,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1], 43 );
     }
 
-    TEST( SmallVectorTests, EdgeCase_LargeStackCapacity )
+    TEST( StackVectorTests, EdgeCase_LargeStackCapacity )
     {
-        SmallVector<int, 128> vec;
+        StackVector<int, 128> vec;
 
         for ( int i = 0; i < 100; ++i )
         {
@@ -724,7 +724,7 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, EdgeCase_NonTrivialType )
+    TEST( StackVectorTests, EdgeCase_NonTrivialType )
     {
         struct NonTrivial
         {
@@ -737,7 +737,7 @@ namespace nfx::containers::test
             }
         };
 
-        SmallVector<NonTrivial, 4> vec;
+        StackVector<NonTrivial, 4> vec;
 
         vec.emplace_back( "test", 42 );
         vec.emplace_back( "hello", 100 );
@@ -749,9 +749,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1].value, 100 );
     }
 
-    TEST( SmallVectorTests, Stress_ManyElements )
+    TEST( StackVectorTests, Stress_ManyElements )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
 
         // Add many elements to force heap allocation and growth
         for ( int i = 0; i < 1000; ++i )
@@ -769,9 +769,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, Stress_PushPopPattern )
+    TEST( StackVectorTests, Stress_PushPopPattern )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         // Repeatedly push and pop
         for ( int cycle = 0; cycle < 100; ++cycle )
@@ -792,9 +792,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, Stress_StringOperations )
+    TEST( StackVectorTests, Stress_StringOperations )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
 
         for ( int i = 0; i < 100; ++i )
         {
@@ -816,25 +816,25 @@ namespace nfx::containers::test
     // Type traits verification
     //=====================================================================
 
-    TEST( SmallVectorTests, TypeTraits_TrivialType )
+    TEST( StackVectorTests, TypeTraits_TrivialType )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         // Should use memcpy for trivial types
         vec.push_back( 1 );
         vec.push_back( 2 );
 
-        SmallVector<int, 4> vec2( std::move( vec ) );
+        StackVector<int, 4> vec2( std::move( vec ) );
 
         EXPECT_EQ( vec2.size(), 2 );
         EXPECT_EQ( vec2[0], 1 );
         EXPECT_EQ( vec2[1], 2 );
     }
 
-    TEST( SmallVectorTests, TypeTraits_ComplexType )
+    TEST( StackVectorTests, TypeTraits_ComplexType )
     {
         // Verify proper construction/destruction for complex types
-        SmallVector<std::pair<int, std::string>, 2> vec;
+        StackVector<std::pair<int, std::string>, 2> vec;
 
         vec.emplace_back( 1, "one" );
         vec.emplace_back( 2, "two" );
@@ -849,9 +849,9 @@ namespace nfx::containers::test
     // Initializer list constructor tests
     //=====================================================================
 
-    TEST( SmallVectorTests, InitializerList_StackStorage )
+    TEST( StackVectorTests, InitializerList_StackStorage )
     {
-        SmallVector<int, 8> vec{ 1, 2, 3, 4 };
+        StackVector<int, 8> vec{ 1, 2, 3, 4 };
 
         EXPECT_EQ( vec.size(), 4 );
         EXPECT_EQ( vec.capacity(), 8 );
@@ -861,9 +861,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[3], 4 );
     }
 
-    TEST( SmallVectorTests, InitializerList_HeapStorage )
+    TEST( StackVectorTests, InitializerList_HeapStorage )
     {
-        SmallVector<int, 4> vec{ 1, 2, 3, 4, 5, 6, 7, 8 };
+        StackVector<int, 4> vec{ 1, 2, 3, 4, 5, 6, 7, 8 };
 
         EXPECT_EQ( vec.size(), 8 );
         EXPECT_GT( vec.capacity(), 4 );
@@ -873,9 +873,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, InitializerList_StringType )
+    TEST( StackVectorTests, InitializerList_StringType )
     {
-        SmallVector<std::string, 4> vec{ "hello", "world", "test" };
+        StackVector<std::string, 4> vec{ "hello", "world", "test" };
 
         EXPECT_EQ( vec.size(), 3 );
         EXPECT_EQ( vec[0], "hello" );
@@ -883,9 +883,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[2], "test" );
     }
 
-    TEST( SmallVectorTests, InitializerList_Empty )
+    TEST( StackVectorTests, InitializerList_Empty )
     {
-        SmallVector<int, 4> vec{};
+        StackVector<int, 4> vec{};
 
         EXPECT_EQ( vec.size(), 0 );
         EXPECT_TRUE( vec.isEmpty() );
@@ -895,14 +895,14 @@ namespace nfx::containers::test
     // Copy constructor and assignment tests
     //=====================================================================
 
-    TEST( SmallVectorTests, CopyConstructor_StackStorage )
+    TEST( StackVectorTests, CopyConstructor_StackStorage )
     {
-        SmallVector<int, 4> vec1;
+        StackVector<int, 4> vec1;
         vec1.push_back( 10 );
         vec1.push_back( 20 );
         vec1.push_back( 30 );
 
-        SmallVector<int, 4> vec2( vec1 );
+        StackVector<int, 4> vec2( vec1 );
 
         EXPECT_EQ( vec2.size(), 3 );
         EXPECT_EQ( vec2[0], 10 );
@@ -919,15 +919,15 @@ namespace nfx::containers::test
         EXPECT_EQ( vec2[0], 99 );
     }
 
-    TEST( SmallVectorTests, CopyConstructor_HeapStorage )
+    TEST( StackVectorTests, CopyConstructor_HeapStorage )
     {
-        SmallVector<int, 2> vec1;
+        StackVector<int, 2> vec1;
         vec1.push_back( 1 );
         vec1.push_back( 2 );
         vec1.push_back( 3 );
         vec1.push_back( 4 );
 
-        SmallVector<int, 2> vec2( vec1 );
+        StackVector<int, 2> vec2( vec1 );
 
         EXPECT_EQ( vec2.size(), 4 );
         for ( int i = 0; i < 4; ++i )
@@ -936,26 +936,26 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, CopyConstructor_StringType )
+    TEST( StackVectorTests, CopyConstructor_StringType )
     {
-        SmallVector<std::string, 4> vec1;
+        StackVector<std::string, 4> vec1;
         vec1.push_back( "test" );
         vec1.push_back( "copy" );
 
-        SmallVector<std::string, 4> vec2( vec1 );
+        StackVector<std::string, 4> vec2( vec1 );
 
         EXPECT_EQ( vec2.size(), 2 );
         EXPECT_EQ( vec2[0], "test" );
         EXPECT_EQ( vec2[1], "copy" );
     }
 
-    TEST( SmallVectorTests, CopyAssignment_StackToStack )
+    TEST( StackVectorTests, CopyAssignment_StackToStack )
     {
-        SmallVector<int, 4> vec1;
+        StackVector<int, 4> vec1;
         vec1.push_back( 10 );
         vec1.push_back( 20 );
 
-        SmallVector<int, 4> vec2;
+        StackVector<int, 4> vec2;
         vec2.push_back( 99 );
 
         vec2 = vec1;
@@ -968,14 +968,14 @@ namespace nfx::containers::test
         EXPECT_EQ( vec1.size(), 2 );
     }
 
-    TEST( SmallVectorTests, CopyAssignment_HeapToHeap )
+    TEST( StackVectorTests, CopyAssignment_HeapToHeap )
     {
-        SmallVector<int, 2> vec1;
+        StackVector<int, 2> vec1;
         vec1.push_back( 1 );
         vec1.push_back( 2 );
         vec1.push_back( 3 );
 
-        SmallVector<int, 2> vec2;
+        StackVector<int, 2> vec2;
         vec2.push_back( 7 );
         vec2.push_back( 8 );
         vec2.push_back( 9 );
@@ -988,9 +988,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec2[2], 3 );
     }
 
-    TEST( SmallVectorTests, CopyAssignment_SelfAssignment )
+    TEST( StackVectorTests, CopyAssignment_SelfAssignment )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1005,9 +1005,9 @@ namespace nfx::containers::test
     // at() method tests - bounds checking
     //=====================================================================
 
-    TEST( SmallVectorTests, At_ValidAccess )
+    TEST( StackVectorTests, At_ValidAccess )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 10 );
         vec.push_back( 20 );
         vec.push_back( 30 );
@@ -1020,18 +1020,18 @@ namespace nfx::containers::test
         EXPECT_EQ( vec.at( 1 ), 99 );
     }
 
-    TEST( SmallVectorTests, At_ConstAccess )
+    TEST( StackVectorTests, At_ConstAccess )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "test" );
 
         const auto& cvec = vec;
         EXPECT_EQ( cvec.at( 0 ), "test" );
     }
 
-    TEST( SmallVectorTests, At_ThrowsOutOfRange )
+    TEST( StackVectorTests, At_ThrowsOutOfRange )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1039,18 +1039,18 @@ namespace nfx::containers::test
         EXPECT_THROW( vec.at( 10 ), std::out_of_range );
     }
 
-    TEST( SmallVectorTests, At_ThrowsOutOfRange_Const )
+    TEST( StackVectorTests, At_ThrowsOutOfRange_Const )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
 
         const auto& cvec = vec;
         EXPECT_THROW( cvec.at( 1 ), std::out_of_range );
     }
 
-    TEST( SmallVectorTests, At_EmptyVector )
+    TEST( StackVectorTests, At_EmptyVector )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
 
         EXPECT_THROW( vec.at( 0 ), std::out_of_range );
     }
@@ -1059,9 +1059,9 @@ namespace nfx::containers::test
     // resize() method tests
     //=====================================================================
 
-    TEST( SmallVectorTests, Resize_ShrinkStack )
+    TEST( StackVectorTests, Resize_ShrinkStack )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -1074,9 +1074,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[1], 2 );
     }
 
-    TEST( SmallVectorTests, Resize_GrowStack_DefaultConstruct )
+    TEST( StackVectorTests, Resize_GrowStack_DefaultConstruct )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1090,9 +1090,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[4], 0 );
     }
 
-    TEST( SmallVectorTests, Resize_GrowStack_WithValue )
+    TEST( StackVectorTests, Resize_GrowStack_WithValue )
     {
-        SmallVector<int, 8> vec;
+        StackVector<int, 8> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1106,9 +1106,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[4], 42 );
     }
 
-    TEST( SmallVectorTests, Resize_GrowToHeap )
+    TEST( StackVectorTests, Resize_GrowToHeap )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1124,9 +1124,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, Resize_GrowToHeap_WithValue )
+    TEST( StackVectorTests, Resize_GrowToHeap_WithValue )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 
@@ -1141,9 +1141,9 @@ namespace nfx::containers::test
         }
     }
 
-    TEST( SmallVectorTests, Resize_ShrinkHeap )
+    TEST( StackVectorTests, Resize_ShrinkHeap )
     {
-        SmallVector<int, 2> vec;
+        StackVector<int, 2> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -1158,9 +1158,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[2], 3 );
     }
 
-    TEST( SmallVectorTests, Resize_StringType )
+    TEST( StackVectorTests, Resize_StringType )
     {
-        SmallVector<std::string, 4> vec;
+        StackVector<std::string, 4> vec;
         vec.push_back( "one" );
         vec.push_back( "two" );
 
@@ -1173,9 +1173,9 @@ namespace nfx::containers::test
         EXPECT_EQ( vec[3], "test" );
     }
 
-    TEST( SmallVectorTests, Resize_ToZero )
+    TEST( StackVectorTests, Resize_ToZero )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
         vec.push_back( 3 );
@@ -1186,9 +1186,9 @@ namespace nfx::containers::test
         EXPECT_TRUE( vec.isEmpty() );
     }
 
-    TEST( SmallVectorTests, Resize_NoChange )
+    TEST( StackVectorTests, Resize_NoChange )
     {
-        SmallVector<int, 4> vec;
+        StackVector<int, 4> vec;
         vec.push_back( 1 );
         vec.push_back( 2 );
 

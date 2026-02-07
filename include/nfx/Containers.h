@@ -37,6 +37,6 @@
 #include "containers/OrderedHashMap.h"
 #include "containers/OrderedHashSet.h"
 #include "containers/PerfectHashMap.h"
-#include "containers/SmallVector.h"
+#include "containers/StackVector.h"
 #include "containers/TransparentHashMap.h"
 #include "containers/TransparentHashSet.h"

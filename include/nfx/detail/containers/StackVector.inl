@@ -23,7 +23,7 @@
  */
 
 /**
- * @file SmallVector.inl
+ * @file StackVector.inl
  * @brief Small vector optimization with stack storage and heap fallback
  * @details Provides vector-like container optimized for small sizes (N elements on stack).
  *          Automatically falls back to heap allocation if size exceeds N.
@@ -32,14 +32,14 @@
 namespace nfx::containers
 {
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>::SmallVector() noexcept
+    inline StackVector<T, N>::StackVector() noexcept
         : m_size{ 0 },
           m_usingStack{ true }
     {
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>::SmallVector( std::initializer_list<T> init )
+    inline StackVector<T, N>::StackVector( std::initializer_list<T> init )
         : m_size{ 0 },
           m_usingStack{ true }
     {
@@ -55,7 +55,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>::SmallVector( const SmallVector& other )
+    inline StackVector<T, N>::StackVector( const StackVector& other )
         : m_size{ other.m_size },
           m_usingStack{ other.m_usingStack }
     {
@@ -80,7 +80,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>::SmallVector( SmallVector&& other ) noexcept
+    inline StackVector<T, N>::StackVector( StackVector&& other ) noexcept
         : m_size{ other.m_size },
           m_usingStack{ other.m_usingStack }
     {
@@ -107,7 +107,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>::~SmallVector() noexcept
+    inline StackVector<T, N>::~StackVector() noexcept
     {
         if ( m_usingStack )
         {
@@ -126,7 +126,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>& SmallVector<T, N>::operator=( const SmallVector& other )
+    inline StackVector<T, N>& StackVector<T, N>::operator=( const StackVector& other )
     {
         if ( this != &other )
         {
@@ -173,7 +173,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline SmallVector<T, N>& SmallVector<T, N>::operator=( SmallVector&& other ) noexcept
+    inline StackVector<T, N>& StackVector<T, N>::operator=( StackVector&& other ) noexcept
     {
         if ( this != &other )
         {
@@ -220,7 +220,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline bool SmallVector<T, N>::operator==( const SmallVector& other ) const noexcept
+    inline bool StackVector<T, N>::operator==( const StackVector& other ) const noexcept
     {
         if ( m_size != other.m_size )
             return false;
@@ -228,13 +228,13 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline bool SmallVector<T, N>::operator!=( const SmallVector& other ) const noexcept
+    inline bool StackVector<T, N>::operator!=( const StackVector& other ) const noexcept
     {
         return !( *this == other );
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::push_back( const T& value )
+    inline void StackVector<T, N>::push_back( const T& value )
     {
         if ( m_usingStack && m_size < N )
         {
@@ -253,7 +253,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::push_back( T&& value )
+    inline void StackVector<T, N>::push_back( T&& value )
     {
         if ( m_usingStack && m_size < N )
         {
@@ -273,7 +273,7 @@ namespace nfx::containers
 
     template <typename T, std::size_t N>
     template <typename... Args>
-    inline void SmallVector<T, N>::emplace_back( Args&&... args )
+    inline void StackVector<T, N>::emplace_back( Args&&... args )
     {
         if ( m_usingStack && m_size < N )
         {
@@ -292,77 +292,77 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::reference SmallVector<T, N>::operator[]( size_type pos ) noexcept
+    inline typename StackVector<T, N>::reference StackVector<T, N>::operator[]( size_type pos ) noexcept
     {
         return m_usingStack ? stackData()[pos] : heapData()[pos];
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_reference SmallVector<T, N>::operator[]( size_type pos ) const noexcept
+    inline typename StackVector<T, N>::const_reference StackVector<T, N>::operator[]( size_type pos ) const noexcept
     {
         return m_usingStack ? stackData()[pos] : heapData()[pos];
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::reference SmallVector<T, N>::at( size_type pos )
+    inline typename StackVector<T, N>::reference StackVector<T, N>::at( size_type pos )
     {
         if ( pos >= m_size )
-            throw std::out_of_range{ "SmallVector<T, N>::at: index out of range" };
+            throw std::out_of_range{ "StackVector<T, N>::at: index out of range" };
         return ( *this )[pos];
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_reference SmallVector<T, N>::at( size_type pos ) const
+    inline typename StackVector<T, N>::const_reference StackVector<T, N>::at( size_type pos ) const
     {
         if ( pos >= m_size )
-            throw std::out_of_range{ "SmallVector<T, N>::at: index out of range" };
+            throw std::out_of_range{ "StackVector<T, N>::at: index out of range" };
         return ( *this )[pos];
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::reference SmallVector<T, N>::back() noexcept
+    inline typename StackVector<T, N>::reference StackVector<T, N>::back() noexcept
     {
         return m_usingStack ? stackData()[m_size - 1] : heapData().back();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_reference SmallVector<T, N>::back() const noexcept
+    inline typename StackVector<T, N>::const_reference StackVector<T, N>::back() const noexcept
     {
         return m_usingStack ? stackData()[m_size - 1] : heapData().back();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::reference SmallVector<T, N>::front() noexcept
+    inline typename StackVector<T, N>::reference StackVector<T, N>::front() noexcept
     {
         return m_usingStack ? stackData()[0] : heapData().front();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_reference SmallVector<T, N>::front() const noexcept
+    inline typename StackVector<T, N>::const_reference StackVector<T, N>::front() const noexcept
     {
         return m_usingStack ? stackData()[0] : heapData().front();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::size_type SmallVector<T, N>::size() const noexcept
+    inline typename StackVector<T, N>::size_type StackVector<T, N>::size() const noexcept
     {
         return m_size;
     }
 
     template <typename T, std::size_t N>
-    inline bool SmallVector<T, N>::isEmpty() const noexcept
+    inline bool StackVector<T, N>::isEmpty() const noexcept
     {
         return m_size == 0;
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::size_type SmallVector<T, N>::capacity() const noexcept
+    inline typename StackVector<T, N>::size_type StackVector<T, N>::capacity() const noexcept
     {
         return m_usingStack ? N : heapData().capacity();
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::resize( size_type count )
+    inline void StackVector<T, N>::resize( size_type count )
     {
         if ( count < m_size )
         {
@@ -395,7 +395,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::resize( size_type count, const T& value )
+    inline void StackVector<T, N>::resize( size_type count, const T& value )
     {
         if ( count < m_size )
         {
@@ -428,7 +428,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::reserve( size_type newCapacity )
+    inline void StackVector<T, N>::reserve( size_type newCapacity )
     {
         if ( newCapacity > N && m_usingStack )
         {
@@ -442,55 +442,55 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::pointer SmallVector<T, N>::data() noexcept
+    inline typename StackVector<T, N>::pointer StackVector<T, N>::data() noexcept
     {
         return m_usingStack ? stackData() : heapData().data();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_pointer SmallVector<T, N>::data() const noexcept
+    inline typename StackVector<T, N>::const_pointer StackVector<T, N>::data() const noexcept
     {
         return m_usingStack ? stackData() : heapData().data();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::pointer SmallVector<T, N>::begin() noexcept
+    inline typename StackVector<T, N>::pointer StackVector<T, N>::begin() noexcept
     {
         return data();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_pointer SmallVector<T, N>::begin() const noexcept
+    inline typename StackVector<T, N>::const_pointer StackVector<T, N>::begin() const noexcept
     {
         return data();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::pointer SmallVector<T, N>::end() noexcept
+    inline typename StackVector<T, N>::pointer StackVector<T, N>::end() noexcept
     {
         return data() + m_size;
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_pointer SmallVector<T, N>::end() const noexcept
+    inline typename StackVector<T, N>::const_pointer StackVector<T, N>::end() const noexcept
     {
         return data() + m_size;
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_pointer SmallVector<T, N>::cbegin() const noexcept
+    inline typename StackVector<T, N>::const_pointer StackVector<T, N>::cbegin() const noexcept
     {
         return data();
     }
 
     template <typename T, std::size_t N>
-    inline typename SmallVector<T, N>::const_pointer SmallVector<T, N>::cend() const noexcept
+    inline typename StackVector<T, N>::const_pointer StackVector<T, N>::cend() const noexcept
     {
         return data() + m_size;
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::clear() noexcept
+    inline void StackVector<T, N>::clear() noexcept
     {
         if ( m_usingStack )
         {
@@ -511,7 +511,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::pop_back() noexcept
+    inline void StackVector<T, N>::pop_back() noexcept
     {
         if ( m_usingStack )
         {
@@ -529,7 +529,7 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline void SmallVector<T, N>::transitionToHeap()
+    inline void StackVector<T, N>::transitionToHeap()
     {
         std::vector<T> vec;
         vec.reserve( N * 2 );
@@ -553,25 +553,25 @@ namespace nfx::containers
     }
 
     template <typename T, std::size_t N>
-    inline T* SmallVector<T, N>::stackData() noexcept
+    inline T* StackVector<T, N>::stackData() noexcept
     {
         return reinterpret_cast<T*>( m_stackStorage );
     }
 
     template <typename T, std::size_t N>
-    inline const T* SmallVector<T, N>::stackData() const noexcept
+    inline const T* StackVector<T, N>::stackData() const noexcept
     {
         return reinterpret_cast<const T*>( m_stackStorage );
     }
 
     template <typename T, std::size_t N>
-    inline std::vector<T>& SmallVector<T, N>::heapData() noexcept
+    inline std::vector<T>& StackVector<T, N>::heapData() noexcept
     {
         return *reinterpret_cast<std::vector<T>*>( &m_heapStorage );
     }
 
     template <typename T, std::size_t N>
-    inline const std::vector<T>& SmallVector<T, N>::heapData() const noexcept
+    inline const std::vector<T>& StackVector<T, N>::heapData() const noexcept
     {
         return *reinterpret_cast<const std::vector<T>*>( &m_heapStorage );
     }

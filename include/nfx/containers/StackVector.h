@@ -23,8 +23,8 @@
  */
 
 /**
- * @file SmallVector.h
- * @brief Small vector optimization with stack storage and heap fallback
+ * @file StackVector.h
+ * @brief Stack vector optimization with stack storage and heap fallback
  * @details Provides vector-like container optimized for small sizes (N elements on stack).
  *          Automatically falls back to heap allocation if size exceeds N.
  */
@@ -44,14 +44,14 @@
 namespace nfx::containers
 {
     /**
-     * @brief Small vector with stack storage optimization
+     * @brief Vector with stack storage optimization
      * @tparam T Element type
      * @tparam N Maximum number of elements to store on stack before heap allocation
      * @details Stores up to N elements on the stack for optimal cache locality and zero heap allocations.
      *          Automatically transitions to heap storage when size exceeds N.
      */
     template <typename T, std::size_t N = 8>
-    class SmallVector final
+    class StackVector final
     {
     public:
         //----------------------------------------------
@@ -84,53 +84,53 @@ namespace nfx::containers
         //----------------------------------------------
 
         /** @brief Default constructor */
-        inline SmallVector() noexcept;
+        inline StackVector() noexcept;
 
         /** @brief Construct from initializer list
          *  @param init Initializer list of elements
          */
-        inline SmallVector( std::initializer_list<T> init );
+        inline StackVector( std::initializer_list<T> init );
 
         /** @brief Copy constructor
-         *  @param other The SmallVector to copy from
+         *  @param other The StackVector to copy from
          */
-        inline SmallVector( const SmallVector& other );
+        inline StackVector( const StackVector& other );
 
         /** @brief Move constructor
-         *  @param other The SmallVector to move from
+         *  @param other The StackVector to move from
          */
-        inline SmallVector( SmallVector&& other ) noexcept;
+        inline StackVector( StackVector&& other ) noexcept;
 
         /** @brief Destructor */
-        inline ~SmallVector() noexcept;
+        inline ~StackVector() noexcept;
 
         /**
          * @brief Copy assignment operator
-         * @param other The SmallVector to copy from
+         * @param other The StackVector to copy from
          * @return Reference to this object
          */
-        inline SmallVector& operator=( const SmallVector& other );
+        inline StackVector& operator=( const StackVector& other );
 
         /**
          * @brief Move assignment operator
-         * @param other The SmallVector to move from
+         * @param other The StackVector to move from
          * @return Reference to this object
          */
-        inline SmallVector& operator=( SmallVector&& other ) noexcept;
+        inline StackVector& operator=( StackVector&& other ) noexcept;
 
         /**
          * @brief Equality comparison operator
-         * @param other The SmallVector to compare with
+         * @param other The StackVector to compare with
          * @return true if equal, false otherwise
          */
-        inline bool operator==( const SmallVector& other ) const noexcept;
+        inline bool operator==( const StackVector& other ) const noexcept;
 
         /**
          * @brief Inequality comparison operator
-         * @param other The SmallVector to compare with
+         * @param other The StackVector to compare with
          * @return true if not equal, false otherwise
          */
-        inline bool operator!=( const SmallVector& other ) const noexcept;
+        inline bool operator!=( const StackVector& other ) const noexcept;
 
         /**
          * @brief Add element to end (copy)
@@ -210,7 +210,7 @@ namespace nfx::containers
          * @brief Get number of elements
          * @return Number of elements in container
          */
-        inline typename SmallVector<T, N>::size_type size() const noexcept;
+        inline typename StackVector<T, N>::size_type size() const noexcept;
 
         /**
          * @brief Check if container is empty
@@ -328,4 +328,4 @@ namespace nfx::containers
     };
 } // namespace nfx::containers
 
-#include "nfx/detail/containers/SmallVector.inl"
+#include "nfx/detail/containers/StackVector.inl"
