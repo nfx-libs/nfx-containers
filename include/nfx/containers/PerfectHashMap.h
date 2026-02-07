@@ -353,10 +353,9 @@ namespace nfx::containers
             /**
              * @brief Construct iterator from table pointers and index
              * @param table Pointer to the hash table storage
-             * @param occupied Pointer to the occupancy bitmap
              * @param index Starting index in the table
              */
-            inline Iterator( const std::vector<std::optional<std::pair<TKey, TValue>>>* table, const std::vector<uint8_t>* occupied, size_t index );
+            inline Iterator( const std::vector<std::optional<std::pair<TKey, TValue>>>* table, size_t index );
 
             //---------------------------
             // Operations
@@ -420,7 +419,6 @@ namespace nfx::containers
             //---------------------------
 
             const std::vector<std::optional<std::pair<TKey, TValue>>>* m_table; ///< Pointer to hash table storage
-            const std::vector<uint8_t>* m_occupied;                             ///< Pointer to occupancy bitmap
             size_t m_index;                                                     ///< Current index in the table
         };
 
@@ -428,7 +426,6 @@ namespace nfx::containers
         size_t m_itemCount = 0;                                      ///< Number of key-value pairs in the map
         std::vector<std::optional<std::pair<TKey, TValue>>> m_table; ///< Hash table storage (sparse)
         std::vector<seed_type> m_seeds;                              ///< Displacement seeds per bucket (negative = occupied)
-        std::vector<uint8_t> m_occupied;                             ///< Occupancy bitmap (1 = occupied, 0 = empty)
         hasher m_hasher;                                             ///< Hash function object
         KeyEqual m_keyEqual;                                         ///< Key equality comparator
     };

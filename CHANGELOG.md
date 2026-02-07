@@ -9,6 +9,7 @@
 ### Changed
 
 - Renamed **SmallVector** to **StackVector**
+- **PerfectHashMap**: Removed redundant `m_occupied` bitmap - use `std::optional::has_value()` instead
   
 ### Deprecated
 
