@@ -5,7 +5,7 @@
 ### Added
 
 - **StackHashMap**: Small buffer optimization hash map with hybrid stack/heap storage
-
+- **StackHashSet**: Small buffer optimization hash set with hybrid stack/heap storage
 
 - **STL C++17 Compatibility**: Added `extract()` and `merge()` methods to all modifiable containers
   - **FastHashMap** and **FastHashSet**: 
