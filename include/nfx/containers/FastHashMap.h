@@ -218,6 +218,22 @@ namespace nfx::containers
         [[nodiscard]] inline bool contains( const KeyType& key ) const noexcept;
 
         /**
+         * @brief Checked element access with bounds checking
+         * @param key The key to access
+         * @return Reference to the value associated with the key
+         * @throws std::out_of_range if key is not found
+         */
+        inline TValue& at( const TKey& key );
+
+        /**
+         * @brief Checked const element access with bounds checking
+         * @param key The key to access
+         * @return Const reference to the value associated with the key
+         * @throws std::out_of_range if key is not found
+         */
+        inline const TValue& at( const TKey& key ) const;
+
+        /**
          * @brief STL-compatible subscript operator (insert-if-missing)
          * @param key The key to access or insert
          * @return Reference to the value associated with the key
