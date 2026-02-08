@@ -358,5 +358,82 @@ int main()
         std::cout << "\n";
     }
 
+    //=====================================================================
+    // 11. Extract operation (node handle)
+    //=====================================================================
+    {
+        std::cout << "11. Extract operation (node handle)\n";
+        std::cout << "------------------------------------------\n";
+
+        TransparentHashSet<std::string> set = { "apple", "banana", "cherry", "date" };
+
+        std::cout << "Original set size: " << set.size() << "\n";
+        std::cout << "Contains 'banana': " << ( set.contains( "banana" ) ? "true" : "false" ) << "\n";
+
+        // Extract an element (returns node_type handle)
+        // Note: extract() only supports exact key type, not heterogeneous lookup
+        // (this is a limitation of std::unordered_set::extract in C++17)
+        auto node = set.extract( "banana" );
+
+        if ( !node.empty() )
+        {
+            std::cout << "Extracted value: " << node.value() << "\n";
+        }
+
+        std::cout << "Set size after extract: " << set.size() << "\n";
+        std::cout << "Contains 'banana': " << ( set.contains( "banana" ) ? "true" : "false" ) << "\n";
+
+        // Re-insert the extracted node
+        if ( !node.empty() )
+        {
+            set.insert( std::move( node ) );
+            std::cout << "Re-inserted extracted value\n";
+            std::cout << "Size after re-insert: " << set.size() << "\n";
+        }
+
+        // Extract non-existent element
+        auto empty_node = set.extract( "grape" );
+        std::cout << "Extract 'grape' (non-existent): " << ( empty_node.empty() ? "empty" : "found" ) << "\n";
+
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 12. Merge operation
+    //=====================================================================
+    {
+        std::cout << "12. Merge operation\n";
+        std::cout << "---------------------------\n";
+
+        TransparentHashSet<std::string> set1 = { "apple", "banana", "cherry" };
+        TransparentHashSet<std::string> set2 = { "date", "elderberry", "banana" };
+
+        std::cout << "Set1 size: " << set1.size() << "\n";
+        std::cout << "Set2 size: " << set2.size() << "\n";
+
+        // Merge set2 into set1 (duplicates remain in set2)
+        set1.merge( set2 );
+
+        std::cout << "\nAfter merge:\n";
+        std::cout << "Set1 size: " << set1.size() << "\n";
+        std::cout << "Set2 size: " << set2.size() << "\n";
+
+        std::cout << "\nSet1 elements: ";
+        for ( const auto& v : set1 )
+        {
+            std::cout << v << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "Set2 elements (duplicates): ";
+        for ( const auto& v : set2 )
+        {
+            std::cout << v << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "\n";
+    }
+
     return 0;
 }

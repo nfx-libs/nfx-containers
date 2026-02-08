@@ -343,5 +343,81 @@ int main()
         std::cout << "\n";
     }
 
+    //=====================================================================
+    // 11. Extract operation (node handle)
+    //=====================================================================
+    {
+        std::cout << "11. Extract operation (node handle)\n";
+        std::cout << "------------------------------------------\n";
+
+        TransparentHashMap<std::string, int> map = {
+            { "apple", 100 },
+            { "banana", 200 },
+            { "cherry", 300 } };
+
+        std::cout << "Map size before extract: " << map.size() << "\n";
+        std::cout << "Contains 'banana': " << ( map.contains( "banana" ) ? "yes" : "no" ) << "\n";
+
+        // Extract returns node_type handle
+        auto node = map.extract( "banana" );
+
+        if ( !node.empty() )
+        {
+            std::cout << "Extracted: " << node.key() << " -> " << node.mapped() << "\n";
+        }
+
+        std::cout << "Map size after extract: " << map.size() << "\n";
+        std::cout << "Contains 'banana': " << ( map.contains( "banana" ) ? "yes" : "no" ) << "\n";
+
+        // Extract non-existent element
+        auto notFound = map.extract( "orange" );
+        std::cout << "Extract 'orange': " << ( notFound.empty() ? "not found" : "found" ) << "\n";
+
+        std::cout << "Note: Returns std::unordered_map::node_type handle\n";
+        std::cout << "      extract() only supports exact key type, not heterogeneous lookup\n";
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 12. Merge operation
+    //=====================================================================
+    {
+        std::cout << "12. Merge operation\n";
+        std::cout << "---------------------------\n";
+
+        TransparentHashMap<std::string, int> map1 = {
+            { "apple", 100 },
+            { "banana", 200 } };
+
+        TransparentHashMap<std::string, int> map2 = {
+            { "cherry", 300 },
+            { "apple", 999 }, // Duplicate - won't be merged
+            { "date", 400 } };
+
+        std::cout << "map1 size before merge: " << map1.size() << "\n";
+        std::cout << "map2 size before merge: " << map2.size() << "\n";
+
+        map1.merge( map2 );
+
+        std::cout << "map1 size after merge: " << map1.size() << "\n";
+        std::cout << "map2 size after merge: " << map2.size() << " (contains duplicates only)\n";
+
+        std::cout << "\nmap1 contents:\n";
+        for ( const auto& [key, value] : map1 )
+        {
+            std::cout << "  " << key << " -> " << value << "\n";
+        }
+
+        std::cout << "\nmap2 remaining contents:\n";
+        for ( const auto& [key, value] : map2 )
+        {
+            std::cout << "  " << key << " -> " << value << " (duplicate)\n";
+        }
+
+        std::cout << "Note: Duplicates remain in source map, unique elements are moved\n";
+        std::cout << "      Same behavior as std::unordered_map::merge()\n";
+        std::cout << "\n";
+    }
+
     return 0;
 }

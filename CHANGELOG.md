@@ -4,11 +4,20 @@
 
 ### Added
 
-- NIL
+- **STL C++17 Compatibility**: Added `extract()` and `merge()` methods to all modifiable containers
+  - **FastHashMap** and **FastHashSet**: 
+    - `extract(key)` returns `std::optional<T>` with heterogeneous lookup support
+    - `merge(other)` transfers unique elements from source to destination
+  - **OrderedHashMap** and **OrderedHashSet**: 
+    - `extract(key)` returns `std::optional<T>` with heterogeneous lookup support
+    - `merge(other)` preserves insertion order when transferring elements
+  - **TransparentHashMap** and **TransparentHashSet**: 
+    - Inherit `extract()` and `merge()` from `std::unordered_map`/`std::unordered_set`
+    - Note: `extract()` does not support heterogeneous lookup (STL limitation)
   
 ### Changed
 
-- Renamed **SmallVector** to **StackVector**
+- **BREAKING:** Renamed **SmallVector** to **StackVector**
 - **PerfectHashMap**: Removed redundant `m_occupied` bitmap - use `std::optional::has_value()` instead
   
 ### Deprecated
