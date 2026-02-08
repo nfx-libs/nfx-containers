@@ -416,6 +416,35 @@ namespace nfx::containers
          */
         inline void clear() noexcept;
 
+        /**
+         * @brief Extract and remove a key-value pair from the map
+         * @tparam KeyType Key type (supports heterogeneous lookup for compatible types)
+         * @param key The key to extract
+         * @return std::optional containing the extracted key-value pair if found, std::nullopt otherwise
+         * @details Removes the key-value pair from the map and returns it. If the key is not found,
+         *          returns std::nullopt. This operation invalidates iterators to the extracted element.
+         *          The insertion order of remaining elements is preserved.
+         * @note This function is marked [[nodiscard]] - the return value should not be ignored
+         */
+        template <typename KeyType = TKey>
+        [[nodiscard]] inline std::optional<std::pair<TKey, TValue>> extract( const KeyType& key );
+
+        /**
+         * @brief Merge elements from another map into this map
+         * @param other Source map to merge from (modified - unique elements are moved out)
+         * @details Attempts to move each element from 'other' into this map in insertion order.
+         *          Elements that already exist in this map (duplicates) remain in 'other'.
+         *          After merge, 'other' contains only elements that were duplicates.
+         *          Insertion order is preserved for both maps.
+         */
+        inline void merge( OrderedHashMap& other );
+
+        /**
+         * @brief Merge elements from another map into this map (rvalue overload)
+         * @param other Source map to merge from (modified - unique elements are moved out)
+         */
+        inline void merge( OrderedHashMap&& other );
+
         //----------------------------------------------
         // State inspection
         //----------------------------------------------

@@ -831,4 +831,259 @@ namespace nfx::containers::test
         EXPECT_EQ( keys2[0], "a" );
         EXPECT_EQ( keys2[1], "b" );
     }
+
+    //=====================================================================
+    // Extract operation tests
+    //=====================================================================
+
+    TEST( OrderedHashMapTests, Extract_BasicOperation )
+    {
+        OrderedHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 }, { "cherry", 300 } };
+
+        EXPECT_EQ( map.size(), 3 );
+        EXPECT_TRUE( map.contains( "banana" ) );
+
+        auto extracted = map.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( extracted->first, "banana" );
+        EXPECT_EQ( extracted->second, 200 );
+        EXPECT_EQ( map.size(), 2 );
+        EXPECT_FALSE( map.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashMapTests, Extract_PreservesOrder )
+    {
+        OrderedHashMap<std::string, int> map = { { "first", 1 }, { "second", 2 }, { "third", 3 }, { "fourth", 4 } };
+
+        (void)map.extract( "second" );
+
+        std::vector<std::string> keys;
+        for ( const auto& [key, value] : map )
+        {
+            keys.push_back( key );
+        }
+
+        EXPECT_EQ( keys.size(), 3 );
+        EXPECT_EQ( keys[0], "first" );
+        EXPECT_EQ( keys[1], "third" );
+        EXPECT_EQ( keys[2], "fourth" );
+    }
+
+    TEST( OrderedHashMapTests, Extract_NonExistent )
+    {
+        OrderedHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 } };
+
+        auto extracted = map.extract( "cherry" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( map.size(), 2 );
+    }
+
+    TEST( OrderedHashMapTests, Extract_HeterogeneousLookup )
+    {
+        OrderedHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 } };
+
+        auto extracted = map.extract( std::string_view( "banana" ) );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( extracted->first, "banana" );
+        EXPECT_EQ( extracted->second, 200 );
+    }
+
+    TEST( OrderedHashMapTests, Extract_MoveSemantics )
+    {
+        OrderedHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 } };
+
+        auto extracted = map.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        auto movedPair = std::move( *extracted );
+        EXPECT_EQ( movedPair.first, "banana" );
+        EXPECT_EQ( movedPair.second, 200 );
+    }
+
+    TEST( OrderedHashMapTests, Extract_FromEmpty )
+    {
+        OrderedHashMap<std::string, int> map;
+
+        auto extracted = map.extract( "anything" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( map.size(), 0 );
+    }
+
+    TEST( OrderedHashMapTests, Extract_AllElements )
+    {
+        OrderedHashMap<std::string, int> map = { { "a", 1 }, { "b", 2 }, { "c", 3 } };
+
+        auto e1 = map.extract( "a" );
+        auto e2 = map.extract( "b" );
+        auto e3 = map.extract( "c" );
+
+        EXPECT_TRUE( e1.has_value() );
+        EXPECT_TRUE( e2.has_value() );
+        EXPECT_TRUE( e3.has_value() );
+        EXPECT_EQ( map.size(), 0 );
+        EXPECT_TRUE( map.isEmpty() );
+    }
+
+    //=====================================================================
+    // Merge operation tests
+    //=====================================================================
+
+    TEST( OrderedHashMapTests, Merge_BasicOperation )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        OrderedHashMap<std::string, int> map2 = { { "cherry", 300 }, { "date", 400 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 4 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_TRUE( map1.contains( "apple" ) );
+        EXPECT_TRUE( map1.contains( "banana" ) );
+        EXPECT_TRUE( map1.contains( "cherry" ) );
+        EXPECT_TRUE( map1.contains( "date" ) );
+    }
+
+    TEST( OrderedHashMapTests, Merge_PreservesOrder )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "a", 1 }, { "b", 2 } };
+        OrderedHashMap<std::string, int> map2 = { { "c", 3 }, { "d", 4 } };
+
+        map1.merge( map2 );
+
+        std::vector<std::string> keys;
+        for ( const auto& [key, value] : map1 )
+        {
+            keys.push_back( key );
+        }
+
+        EXPECT_EQ( keys.size(), 4 );
+        EXPECT_EQ( keys[0], "a" );
+        EXPECT_EQ( keys[1], "b" );
+        EXPECT_EQ( keys[2], "c" );
+        EXPECT_EQ( keys[3], "d" );
+    }
+
+    TEST( OrderedHashMapTests, Merge_WithDuplicates )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        OrderedHashMap<std::string, int> map2 = { { "cherry", 300 }, { "apple", 999 }, { "date", 400 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 4 );
+        EXPECT_EQ( map2.size(), 1 );
+        EXPECT_TRUE( map2.contains( "apple" ) );
+        EXPECT_EQ( map2.at( "apple" ), 999 );
+        EXPECT_EQ( map1.at( "apple" ), 100 ); // Original value preserved
+    }
+
+    TEST( OrderedHashMapTests, Merge_EmptySource )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        OrderedHashMap<std::string, int> map2;
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( OrderedHashMapTests, Merge_EmptyDestination )
+    {
+        OrderedHashMap<std::string, int> map1;
+        OrderedHashMap<std::string, int> map2 = { { "apple", 100 }, { "banana", 200 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_TRUE( map1.contains( "apple" ) );
+        EXPECT_TRUE( map1.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashMapTests, Merge_BothEmpty )
+    {
+        OrderedHashMap<std::string, int> map1;
+        OrderedHashMap<std::string, int> map2;
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 0 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( OrderedHashMapTests, Merge_RvalueReference )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 } };
+        OrderedHashMap<std::string, int> map2 = { { "banana", 200 } };
+
+        map1.merge( std::move( map2 ) );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_TRUE( map1.contains( "apple" ) );
+        EXPECT_TRUE( map1.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashMapTests, Merge_AllDuplicates )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 }, { "cherry", 300 } };
+        OrderedHashMap<std::string, int> map2 = { { "apple", 999 }, { "banana", 888 }, { "cherry", 777 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 3 );
+        EXPECT_EQ( map2.size(), 3 );
+    }
+
+    TEST( OrderedHashMapTests, Merge_LargeDataset )
+    {
+        OrderedHashMap<int, int> map1;
+        OrderedHashMap<int, int> map2;
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            map1.insertOrAssign( i, i * 10 );
+        }
+
+        for ( int i = 50; i < 150; ++i )
+        {
+            map2.insertOrAssign( i, i * 20 );
+        }
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 150 );
+        EXPECT_EQ( map2.size(), 50 );
+
+        for ( int i = 50; i < 100; ++i )
+        {
+            EXPECT_TRUE( map2.contains( i ) );
+        }
+    }
+
+    TEST( OrderedHashMapTests, Merge_ExtractMergeWorkflow )
+    {
+        OrderedHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        OrderedHashMap<std::string, int> map2 = { { "cherry", 300 }, { "date", 400 } };
+        OrderedHashMap<std::string, int> map3;
+
+        auto extracted = map1.extract( "banana" );
+        if ( extracted )
+        {
+            map3.insertOrAssign( std::move( extracted->first ), std::move( extracted->second ) );
+        }
+
+        map3.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 1 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_EQ( map3.size(), 3 );
+        EXPECT_TRUE( map3.contains( "banana" ) );
+        EXPECT_TRUE( map3.contains( "cherry" ) );
+        EXPECT_TRUE( map3.contains( "date" ) );
+    }
 } // namespace nfx::containers::test

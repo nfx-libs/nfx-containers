@@ -474,5 +474,113 @@ int main()
         std::cout << "\n";
     }
 
+    //=====================================================================
+    // 17. Extract operation
+    //=====================================================================
+    {
+        std::cout << "17. Extract operation\n";
+        std::cout << "---------------------\n";
+
+        OrderedHashMap<std::string, int> map = {
+            { "first", 1 },
+            { "second", 2 },
+            { "third", 3 },
+            { "fourth", 4 } };
+
+        std::cout << "Original order: ";
+        for ( const auto& [key, value] : map )
+        {
+            std::cout << key << ":" << value << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "Map size before extract: " << map.size() << "\n";
+
+        auto extracted = map.extract( "second" );
+
+        if ( extracted )
+        {
+            std::cout << "Extracted: " << extracted->first << " -> " << extracted->second << "\n";
+        }
+
+        std::cout << "Map size after extract: " << map.size() << "\n";
+        std::cout << "Order after extract: ";
+        for ( const auto& [key, value] : map )
+        {
+            std::cout << key << ":" << value << " ";
+        }
+        std::cout << "\n";
+
+        // Extract non-existent element
+        auto notFound = map.extract( "nonexistent" );
+        std::cout << "Extract 'nonexistent': " << ( notFound ? "found" : "not found" ) << "\n";
+
+        // Heterogeneous lookup with string_view
+        auto extracted2 = map.extract( std::string_view( "third" ) );
+        if ( extracted2 )
+        {
+            std::cout << "Extracted with string_view: " << extracted2->first << " -> " << extracted2->second << "\n";
+        }
+
+        std::cout << "Note: Insertion order is preserved after extraction!\n";
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 18. Merge operation
+    //=====================================================================
+    {
+        std::cout << "18. Merge operation\n";
+        std::cout << "-------------------\n";
+
+        OrderedHashMap<std::string, int> map1 = {
+            { "apple", 100 },
+            { "banana", 200 } };
+
+        OrderedHashMap<std::string, int> map2 = {
+            { "cherry", 300 },
+            { "apple", 999 }, // Duplicate
+            { "date", 400 } };
+
+        std::cout << "map1 order before merge: ";
+        for ( const auto& [key, value] : map1 )
+        {
+            std::cout << key << ":" << value << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "map2 order before merge: ";
+        for ( const auto& [key, value] : map2 )
+        {
+            std::cout << key << ":" << value << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "map1 size before merge: " << map1.size() << "\n";
+        std::cout << "map2 size before merge: " << map2.size() << "\n";
+
+        map1.merge( map2 );
+
+        std::cout << "map1 size after merge: " << map1.size() << "\n";
+        std::cout << "map2 size after merge: " << map2.size() << " (contains duplicates only)\n";
+
+        std::cout << "\nmap1 order after merge: ";
+        for ( const auto& [key, value] : map1 )
+        {
+            std::cout << key << ":" << value << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "\nmap2 remaining contents:\n";
+        for ( const auto& [key, value] : map2 )
+        {
+            std::cout << "  " << key << " -> " << value << " (duplicate)\n";
+        }
+
+        std::cout << "Note: Duplicates remain in source map, unique elements are moved\n";
+        std::cout << "      Insertion order is preserved in both maps!\n";
+        std::cout << "\n";
+    }
+
     return 0;
 }
