@@ -252,6 +252,28 @@ namespace nfx::containers
     }
 
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline TValue& OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::at( const TKey& key )
+    {
+        TValue* value{ find( key ) };
+        if ( !value )
+        {
+            throw std::out_of_range{ "OrderedHashMap::at: key not found" };
+        }
+        return *value;
+    }
+
+    template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline const TValue& OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::at( const TKey& key ) const
+    {
+        const TValue* value{ find( key ) };
+        if ( !value )
+        {
+            throw std::out_of_range{ "OrderedHashMap::at: key not found" };
+        }
+        return *value;
+    }
+
+    template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline TValue& OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::operator[]( const TKey& key )
     {
         TValue* existing = find( key );
@@ -283,10 +305,10 @@ namespace nfx::containers
     template <typename KeyType>
     inline TValue& OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::at( const KeyType& key )
     {
-        TValue* value = find( key );
+        TValue* value{ find( key ) };
         if ( !value )
         {
-            throw std::out_of_range( "OrderedHashMap::at: key not found" );
+            throw std::out_of_range{ "OrderedHashMap::at: key not found" };
         }
         return *value;
     }
@@ -295,10 +317,10 @@ namespace nfx::containers
     template <typename KeyType>
     inline const TValue& OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::at( const KeyType& key ) const
     {
-        const TValue* value = find( key );
+        const TValue* value{ find( key ) };
         if ( !value )
         {
-            throw std::out_of_range( "OrderedHashMap::at: key not found" );
+            throw std::out_of_range{ "OrderedHashMap::at: key not found" };
         }
         return *value;
     }
