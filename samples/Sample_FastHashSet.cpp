@@ -379,5 +379,75 @@ int main()
         std::cout << "\n";
     }
 
+    //=====================================================================
+    // 16. Extract operation
+    //=====================================================================
+    {
+        std::cout << "16. Extract operation\n";
+        std::cout << "---------------------\n";
+
+        FastHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        std::cout << "Set size before extract: " << set.size() << "\n";
+        std::cout << "Contains 'banana': " << ( set.contains( "banana" ) ? "yes" : "no" ) << "\n";
+
+        auto extracted = set.extract( "banana" );
+
+        if ( extracted )
+        {
+            std::cout << "Extracted: " << *extracted << "\n";
+        }
+
+        std::cout << "Set size after extract: " << set.size() << "\n";
+        std::cout << "Contains 'banana': " << ( set.contains( "banana" ) ? "yes" : "no" ) << "\n";
+
+        // Extract non-existent element
+        auto notFound = set.extract( "orange" );
+        std::cout << "Extract 'orange': " << ( notFound ? "found" : "not found" ) << "\n";
+
+        // Heterogeneous lookup with string_view
+        auto extracted2 = set.extract( std::string_view( "apple" ) );
+        if ( extracted2 )
+        {
+            std::cout << "Extracted with string_view: " << *extracted2 << "\n";
+        }
+
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 17. Merge operation
+    //=====================================================================
+    {
+        std::cout << "17. Merge operation\n";
+        std::cout << "-------------------\n";
+
+        FastHashSet<std::string> set1 = { "apple", "banana" };
+        FastHashSet<std::string> set2 = { "cherry", "date", "apple" }; // "apple" is duplicate
+
+        std::cout << "set1 size before merge: " << set1.size() << "\n";
+        std::cout << "set2 size before merge: " << set2.size() << "\n";
+
+        set1.merge( set2 );
+
+        std::cout << "set1 size after merge: " << set1.size() << "\n";
+        std::cout << "set2 size after merge: " << set2.size() << " (contains duplicates only)\n";
+
+        std::cout << "\nset1 contents:\n";
+        for ( const auto& key : set1 )
+        {
+            std::cout << "  " << key << "\n";
+        }
+
+        std::cout << "\nset2 remaining contents:\n";
+        for ( const auto& key : set2 )
+        {
+            std::cout << "  " << key << " (duplicate)\n";
+        }
+
+        std::cout << "Note: Duplicates remain in source set, unique elements are moved\n";
+        std::cout << "\n";
+    }
+
     return 0;
 }

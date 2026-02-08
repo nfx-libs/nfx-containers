@@ -304,6 +304,33 @@ namespace nfx::containers
          */
         inline void clear() noexcept;
 
+        /**
+         * @brief Extract and remove a key from the set
+         * @tparam KeyType Key type (supports heterogeneous lookup for compatible types)
+         * @param key The key to extract
+         * @return std::optional containing the extracted key if found, std::nullopt otherwise
+         * @details Removes the key from the set and returns it. If the key is not found,
+         *          returns std::nullopt. This operation invalidates iterators to the extracted element.
+         * @note This function is marked [[nodiscard]] - the return value should not be ignored
+         */
+        template <typename KeyType = TKey>
+        [[nodiscard]] inline std::optional<TKey> extract( const KeyType& key );
+
+        /**
+         * @brief Merge elements from another set into this set
+         * @param other Source set to merge from (modified - unique elements are moved out)
+         * @details Attempts to move each element from 'other' into this set. Elements that
+         *          already exist in this set (duplicates) remain in 'other'. After merge,
+         *          'other' contains only elements that were duplicates.
+         */
+        inline void merge( FastHashSet& other );
+
+        /**
+         * @brief Merge elements from another set into this set (rvalue overload)
+         * @param other Source set to merge from (modified - unique elements are moved out)
+         */
+        inline void merge( FastHashSet&& other );
+
         //----------------------------------------------
         // State inspection
         //----------------------------------------------

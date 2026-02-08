@@ -350,6 +350,62 @@ namespace nfx::containers
         m_size = 0;
     }
 
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    template <typename KeyType>
+    inline std::optional<TKey> FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::extract( const KeyType& key )
+    {
+        const HashType hash( m_hasher( key ) );
+
+        size_t pos( static_cast<size_t>( hash & m_mask ) );
+        uint32_t distance( 0 );
+
+        while ( distance <= m_buckets[pos].distance && m_buckets[pos].occupied )
+        {
+            if ( m_buckets[pos].hash == hash && keysEqual( *m_buckets[pos].data, key ) )
+            {
+                // Extract the key before erasing
+                std::optional<TKey> extracted{ std::move( *m_buckets[pos].data ) };
+                eraseAtPosition( pos );
+                --m_size;
+                return extracted;
+            }
+            pos = ( pos + 1 ) & m_mask;
+            ++distance;
+        }
+
+        return std::nullopt;
+    }
+
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::merge( FastHashSet& other )
+    {
+        auto it = other.begin();
+        while ( it != other.end() )
+        {
+            if ( !contains( *it ) )
+            {
+                // Extract from other and insert into this
+                auto extracted = other.extract( *it );
+                if ( extracted )
+                {
+                    insert( std::move( *extracted ) );
+                }
+                // Iterator is now invalid, restart from begin
+                it = other.begin();
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::merge( FastHashSet&& other )
+    {
+        merge( other );
+    }
+
     //----------------------------------------------
     // State inspection
     //----------------------------------------------

@@ -1803,4 +1803,224 @@ namespace nfx::containers::test
         EXPECT_EQ( secondCount, 1 ); // Key constructed but not inserted
         EXPECT_EQ( set.size(), 1 );  // Set size unchanged
     }
+
+    //=====================================================================
+    // Extract operation tests
+    //=====================================================================
+
+    TEST( FastHashSetTests, Extract_BasicOperation )
+    {
+        FastHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        EXPECT_EQ( set.size(), 3 );
+        EXPECT_TRUE( set.contains( "banana" ) );
+
+        auto extracted = set.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( *extracted, "banana" );
+        EXPECT_EQ( set.size(), 2 );
+        EXPECT_FALSE( set.contains( "banana" ) );
+    }
+
+    TEST( FastHashSetTests, Extract_NonExistent )
+    {
+        FastHashSet<std::string> set = { "apple", "banana" };
+
+        auto extracted = set.extract( "cherry" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( set.size(), 2 ); // Unchanged
+    }
+
+    TEST( FastHashSetTests, Extract_HeterogeneousLookup )
+    {
+        FastHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        // Extract using string_view instead of string
+        auto extracted = set.extract( std::string_view( "banana" ) );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( *extracted, "banana" );
+        EXPECT_FALSE( set.contains( "banana" ) );
+    }
+
+    TEST( FastHashSetTests, Extract_MoveSemantics )
+    {
+        FastHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        auto extracted = set.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        // Move the extracted value
+        std::string moved = std::move( *extracted );
+        EXPECT_EQ( moved, "banana" );
+    }
+
+    TEST( FastHashSetTests, Extract_FromEmpty )
+    {
+        FastHashSet<std::string> set;
+
+        auto extracted = set.extract( "anything" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( set.size(), 0 );
+    }
+
+    TEST( FastHashSetTests, Extract_AllElements )
+    {
+        FastHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        auto e1 = set.extract( "apple" );
+        auto e2 = set.extract( "banana" );
+        auto e3 = set.extract( "cherry" );
+
+        EXPECT_TRUE( e1.has_value() );
+        EXPECT_TRUE( e2.has_value() );
+        EXPECT_TRUE( e3.has_value() );
+        EXPECT_EQ( set.size(), 0 );
+        EXPECT_TRUE( set.isEmpty() );
+    }
+
+    //=====================================================================
+    // Merge operation tests
+    //=====================================================================
+
+    TEST( FastHashSetTests, Merge_BasicOperation )
+    {
+        FastHashSet<std::string> set1 = { "apple", "banana" };
+        FastHashSet<std::string> set2 = { "cherry", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 );
+        EXPECT_EQ( set2.size(), 0 ); // All elements moved
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+        EXPECT_TRUE( set1.contains( "cherry" ) );
+        EXPECT_TRUE( set1.contains( "date" ) );
+    }
+
+    TEST( FastHashSetTests, Merge_WithDuplicates )
+    {
+        FastHashSet<std::string> set1 = { "apple", "banana" };
+        FastHashSet<std::string> set2 = { "cherry", "apple", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 ); // apple, banana, cherry, date
+        EXPECT_EQ( set2.size(), 1 ); // Only duplicate "apple" remains
+        EXPECT_TRUE( set2.contains( "apple" ) );
+        EXPECT_FALSE( set2.contains( "cherry" ) );
+        EXPECT_FALSE( set2.contains( "date" ) );
+    }
+
+    TEST( FastHashSetTests, Merge_EmptySource )
+    {
+        FastHashSet<std::string> set1 = { "apple", "banana" };
+        FastHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( FastHashSetTests, Merge_EmptyDestination )
+    {
+        FastHashSet<std::string> set1;
+        FastHashSet<std::string> set2 = { "apple", "banana" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+    }
+
+    TEST( FastHashSetTests, Merge_BothEmpty )
+    {
+        FastHashSet<std::string> set1;
+        FastHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 0 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( FastHashSetTests, Merge_RvalueReference )
+    {
+        FastHashSet<std::string> set1 = { "apple" };
+        FastHashSet<std::string> set2 = { "banana" };
+
+        set1.merge( std::move( set2 ) );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+    }
+
+    TEST( FastHashSetTests, Merge_AllDuplicates )
+    {
+        FastHashSet<std::string> set1 = { "apple", "banana", "cherry" };
+        FastHashSet<std::string> set2 = { "apple", "banana", "cherry" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 3 ); // No new elements
+        EXPECT_EQ( set2.size(), 3 ); // All remain (all duplicates)
+    }
+
+    TEST( FastHashSetTests, Merge_LargeDataset )
+    {
+        FastHashSet<int> set1;
+        FastHashSet<int> set2;
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            set1.insert( i );
+        }
+
+        for ( int i = 50; i < 150; ++i )
+        {
+            set2.insert( i );
+        }
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 150 ); // 0-149
+        EXPECT_EQ( set2.size(), 50 );  // 50-99 (duplicates)
+
+        // Verify duplicates remain in set2
+        for ( int i = 50; i < 100; ++i )
+        {
+            EXPECT_TRUE( set2.contains( i ) );
+        }
+    }
+
+    TEST( FastHashSetTests, Merge_ExtractMergeWorkflow )
+    {
+        FastHashSet<std::string> set1 = { "apple", "banana" };
+        FastHashSet<std::string> set2 = { "cherry", "date" };
+        FastHashSet<std::string> set3;
+
+        // Extract from set1, insert into set3
+        auto extracted = set1.extract( "banana" );
+        if ( extracted )
+        {
+            set3.insert( std::move( *extracted ) );
+        }
+
+        // Merge set2 into set3
+        set3.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 1 ); // apple
+        EXPECT_EQ( set2.size(), 0 ); // empty
+        EXPECT_EQ( set3.size(), 3 ); // banana, cherry, date
+        EXPECT_TRUE( set3.contains( "banana" ) );
+        EXPECT_TRUE( set3.contains( "cherry" ) );
+        EXPECT_TRUE( set3.contains( "date" ) );
+    }
 } // namespace nfx::containers::test
