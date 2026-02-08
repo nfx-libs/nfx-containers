@@ -124,17 +124,46 @@ int main()
         std::cout << "contains(\"hits\"): " << ( cache.contains( "hits" ) ? "true" : "false" ) << "\n";
         std::cout << "contains(\"errors\"): " << ( cache.contains( "errors" ) ? "true" : "false" ) << "\n";
 
-        std::cout << "count(\"hits\"): " << cache.count( "hits" ) << "\n";
-        std::cout << "count(\"errors\"): " << cache.count( "errors" ) << "\n";
+        // Using find() to get pointer to value
+        if ( int* hits{ cache.find( "hits" ) } )
+        {
+            std::cout << "find(\"hits\") = " << *hits << "\n";
+        }
+
+        int* errors{ cache.find( "errors" ) };
+        std::cout << "find(\"errors\") = " << ( errors ? std::to_string( *errors ) : "nullptr" ) << "\n";
 
         std::cout << "\n";
     }
 
     //=====================================================================
-    // 5. Heterogeneous lookup (zero-copy)
+    // 5. insertOrAssign() - Update or insert
     //=====================================================================
     {
-        std::cout << "5. Heterogeneous lookup (zero-copy)\n";
+        std::cout << "5. insertOrAssign() - Update or insert\n";
+        std::cout << "---------------------------------------\n";
+
+        StackHashMap<std::string, int> counters{ { "requests", 100 } };
+
+        std::cout << "Initial: requests = " << counters["requests"] << "\n";
+
+        // Update existing key
+        counters.insertOrAssign( "requests", 200 );
+        std::cout << "After insertOrAssign: requests = " << counters["requests"] << "\n";
+
+        // Insert new key
+        counters.insertOrAssign( "errors", 5 );
+        std::cout << "Inserted: errors = " << counters["errors"] << "\n";
+        std::cout << "Size: " << counters.size() << "\n";
+
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 6. Heterogeneous lookup (zero-copy)
+    //=====================================================================
+    {
+        std::cout << "6. Heterogeneous lookup (zero-copy)\n";
         std::cout << "------------------------------------\n";
 
         StackHashMap<std::string, int> vars{
@@ -148,10 +177,10 @@ int main()
     }
 
     //=====================================================================
-    // 6. Insert and erase
+    // 7. Insert and erase
     //=====================================================================
     {
-        std::cout << "6. Insert and erase\n";
+        std::cout << "7. Insert and erase\n";
         std::cout << "-------------------\n";
 
         StackHashMap<int, std::string, 8> items;
@@ -172,10 +201,10 @@ int main()
     }
 
     //=====================================================================
-    // 7. Emplace construction
+    // 8. Emplace construction
     //=====================================================================
     {
-        std::cout << "7. Emplace construction\n";
+        std::cout << "8. Emplace construction\n";
         std::cout << "-----------------------\n";
 
         StackHashMap<std::string, std::string> map;
@@ -188,10 +217,10 @@ int main()
     }
 
     //=====================================================================
-    // 8. Clear operation
+    // 9. Clear operation
     //=====================================================================
     {
-        std::cout << "8. Clear operation\n";
+        std::cout << "9. Clear operation\n";
         std::cout << "------------------\n";
 
         StackHashMap<int, int> data{ { 1, 10 }, { 2, 20 }, { 3, 30 } };
@@ -205,11 +234,11 @@ int main()
     }
 
     //=====================================================================
-    // 9. Extract operation
+    // 10. Extract operation
     //=====================================================================
     {
-        std::cout << "9. Extract operation\n";
-        std::cout << "--------------------\n";
+        std::cout << "10. Extract operation\n";
+        std::cout << "---------------------\n";
 
         StackHashMap<std::string, int> stats{
             { "wins", 10 },
@@ -230,10 +259,10 @@ int main()
     }
 
     //=====================================================================
-    // 10. Merge operation
+    // 11. Merge operation
     //=====================================================================
     {
-        std::cout << "10. Merge operation\n";
+        std::cout << "11. Merge operation\n";
         std::cout << "-------------------\n";
 
         StackHashMap<std::string, int> config1{
@@ -255,10 +284,10 @@ int main()
     }
 
     //=====================================================================
-    // 11. Use case: Small local cache
+    // 12. Use case: Small local cache
     //=====================================================================
     {
-        std::cout << "11. Use case: Small local cache\n";
+        std::cout << "12. Use case: Small local cache\n";
         std::cout << "--------------------------------\n";
 
         // Perfect for function-local caches with predictable small size
@@ -276,6 +305,5 @@ int main()
         std::cout << "\n";
     }
 
-    std::cout << "=== Sample completed ===\n";
     return 0;
 }

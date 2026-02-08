@@ -215,6 +215,33 @@ namespace nfx::containers
         inline std::pair<value_type*, bool> emplace( Args&&... args );
 
         /**
+         * @brief Insert or assign a key-value pair (copy value)
+         * @param key The key to insert or assign to
+         * @param value The value to assign
+         * @details If key exists, assigns new value. Otherwise inserts new pair.
+         *          May trigger transition to heap storage.
+         */
+        inline void insertOrAssign( const TKey& key, const TValue& value );
+
+        /**
+         * @brief Insert or assign a key-value pair (move value)
+         * @param key The key to insert or assign to
+         * @param value The value to assign (moved)
+         * @details If key exists, assigns new value. Otherwise inserts new pair.
+         *          May trigger transition to heap storage.
+         */
+        inline void insertOrAssign( const TKey& key, TValue&& value );
+
+        /**
+         * @brief Insert or assign a key-value pair (move key and value)
+         * @param key The key to insert or assign to (moved)
+         * @param value The value to assign (moved)
+         * @details If key exists, assigns new value. Otherwise inserts new pair.
+         *          May trigger transition to heap storage.
+         */
+        inline void insertOrAssign( TKey&& key, TValue&& value );
+
+        /**
          * @brief Erase element by key
          * @param key The key to erase
          * @return Number of elements erased (0 or 1)
@@ -256,6 +283,22 @@ namespace nfx::containers
         //----------------------------------------------
         // Lookup
         //----------------------------------------------
+
+        /**
+         * @brief Find a value by key
+         * @param key The key to search for
+         * @return Pointer to the value if found, nullptr otherwise
+         * @note This function is marked [[nodiscard]] - the return value should not be ignored
+         */
+        [[nodiscard]] inline TValue* find( const TKey& key ) noexcept;
+
+        /**
+         * @brief Find a value by key (const version)
+         * @param key The key to search for
+         * @return Const pointer to the value if found, nullptr otherwise
+         * @note This function is marked [[nodiscard]] - the return value should not be ignored
+         */
+        [[nodiscard]] inline const TValue* find( const TKey& key ) const noexcept;
 
         /**
          * @brief Count occurrences of key in map

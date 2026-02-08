@@ -96,7 +96,7 @@ namespace nfx::containers
                     return entry.data->second;
                 }
             }
-            throw std::out_of_range( "StackHashMap::at: key not found" );
+            throw std::out_of_range{ "StackHashMap::at: key not found" };
         }
         return m_heap->at( key );
     }
@@ -113,7 +113,7 @@ namespace nfx::containers
                     return entry.data->second;
                 }
             }
-            throw std::out_of_range( "StackHashMap::at: key not found" );
+            throw std::out_of_range{ "StackHashMap::at: key not found" };
         }
         return m_heap->at( key );
     }
@@ -250,6 +250,39 @@ namespace nfx::containers
     }
 
     template <typename TKey, typename TValue, size_t N, typename KeyEqual>
+    inline void StackHashMap<TKey, TValue, N, KeyEqual>::insertOrAssign( const TKey& key, const TValue& value )
+    {
+        if ( TValue* existing = find( key ) )
+        {
+            *existing = value;
+            return;
+        }
+        insert( std::pair<TKey, TValue>{ key, value } );
+    }
+
+    template <typename TKey, typename TValue, size_t N, typename KeyEqual>
+    inline void StackHashMap<TKey, TValue, N, KeyEqual>::insertOrAssign( const TKey& key, TValue&& value )
+    {
+        if ( TValue* existing = find( key ) )
+        {
+            *existing = std::move( value );
+            return;
+        }
+        insert( std::pair<TKey, TValue>{ key, std::move( value ) } );
+    }
+
+    template <typename TKey, typename TValue, size_t N, typename KeyEqual>
+    inline void StackHashMap<TKey, TValue, N, KeyEqual>::insertOrAssign( TKey&& key, TValue&& value )
+    {
+        if ( TValue* existing = find( key ) )
+        {
+            *existing = std::move( value );
+            return;
+        }
+        insert( std::pair<TKey, TValue>{ std::move( key ), std::move( value ) } );
+    }
+
+    template <typename TKey, typename TValue, size_t N, typename KeyEqual>
     inline size_t StackHashMap<TKey, TValue, N, KeyEqual>::erase( const TKey& key )
     {
         if ( isOnStack() )
@@ -375,6 +408,40 @@ namespace nfx::containers
     //=====================================================================
     // Lookup
     //=====================================================================
+
+    template <typename TKey, typename TValue, size_t N, typename KeyEqual>
+    inline TValue* StackHashMap<TKey, TValue, N, KeyEqual>::find( const TKey& key ) noexcept
+    {
+        if ( isOnStack() )
+        {
+            for ( auto& entry : m_stack )
+            {
+                if ( entry.data.has_value() && KeyEqual{}( entry.data->first, key ) )
+                {
+                    return &entry.data->second;
+                }
+            }
+            return nullptr;
+        }
+        return m_heap->find( key );
+    }
+
+    template <typename TKey, typename TValue, size_t N, typename KeyEqual>
+    inline const TValue* StackHashMap<TKey, TValue, N, KeyEqual>::find( const TKey& key ) const noexcept
+    {
+        if ( isOnStack() )
+        {
+            for ( const auto& entry : m_stack )
+            {
+                if ( entry.data.has_value() && KeyEqual{}( entry.data->first, key ) )
+                {
+                    return &entry.data->second;
+                }
+            }
+            return nullptr;
+        }
+        return m_heap->find( key );
+    }
 
     template <typename TKey, typename TValue, size_t N, typename KeyEqual>
     inline size_t StackHashMap<TKey, TValue, N, KeyEqual>::count( const TKey& key ) const

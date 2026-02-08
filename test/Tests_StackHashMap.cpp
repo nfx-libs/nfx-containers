@@ -356,6 +356,126 @@ namespace nfx::containers::test
     }
 
     //=====================================================================
+    // Lookup - find()
+    //=====================================================================
+
+    TEST( StackHashMapTests, Find_ExistingKey_Stack )
+    {
+        StackHashMap<std::string, int> map{ { "key1", 10 }, { "key2", 20 } };
+
+        int* value{ map.find( "key1" ) };
+        ASSERT_NE( value, nullptr );
+        EXPECT_EQ( *value, 10 );
+
+        value = map.find( "key2" );
+        ASSERT_NE( value, nullptr );
+        EXPECT_EQ( *value, 20 );
+    }
+
+    TEST( StackHashMapTests, Find_MissingKey_Stack )
+    {
+        StackHashMap<std::string, int> map{ { "key1", 10 } };
+
+        int* value{ map.find( "missing" ) };
+        EXPECT_EQ( value, nullptr );
+    }
+
+    TEST( StackHashMapTests, Find_ExistingKey_Heap )
+    {
+        StackHashMap<int, int, 2> map;
+        // Force transition to heap by exceeding stack capacity
+        map[1] = 10;
+        map[2] = 20;
+        map[3] = 30;
+
+        int* value{ map.find( 2 ) };
+        ASSERT_NE( value, nullptr );
+        EXPECT_EQ( *value, 20 );
+    }
+
+    TEST( StackHashMapTests, Find_ConstVersion )
+    {
+        const StackHashMap<std::string, int> map{ { "test", 42 } };
+
+        const int* value{ map.find( "test" ) };
+        ASSERT_NE( value, nullptr );
+        EXPECT_EQ( *value, 42 );
+
+        value = map.find( "missing" );
+        EXPECT_EQ( value, nullptr );
+    }
+
+    TEST( StackHashMapTests, Find_ModifyValue )
+    {
+        StackHashMap<std::string, int> map{ { "key", 10 } };
+
+        int* value{ map.find( "key" ) };
+        ASSERT_NE( value, nullptr );
+        *value = 99;
+
+        EXPECT_EQ( map["key"], 99 );
+    }
+
+    //=====================================================================
+    // Modifiers - insertOrAssign()
+    //=====================================================================
+
+    TEST( StackHashMapTests, InsertOrAssign_NewKey_ConstRef )
+    {
+        StackHashMap<std::string, int> map;
+        std::string key{ "new" };
+        int value{ 42 };
+
+        map.insertOrAssign( key, value );
+
+        EXPECT_EQ( map.size(), 1 );
+        EXPECT_EQ( map["new"], 42 );
+    }
+
+    TEST( StackHashMapTests, InsertOrAssign_ExistingKey_UpdatesValue )
+    {
+        StackHashMap<std::string, int> map{ { "existing", 10 } };
+
+        map.insertOrAssign( "existing", 99 );
+
+        EXPECT_EQ( map.size(), 1 );
+        EXPECT_EQ( map["existing"], 99 );
+    }
+
+    TEST( StackHashMapTests, InsertOrAssign_MoveValue )
+    {
+        StackHashMap<std::string, std::string> map;
+
+        std::string value{ "moved_value" };
+        map.insertOrAssign( "key", std::move( value ) );
+
+        EXPECT_EQ( map["key"], "moved_value" );
+    }
+
+    TEST( StackHashMapTests, InsertOrAssign_MoveKeyAndValue )
+    {
+        StackHashMap<std::string, std::string> map;
+
+        map.insertOrAssign( std::string{ "key" }, std::string{ "value" } );
+
+        EXPECT_EQ( map.size(), 1 );
+        EXPECT_EQ( map["key"], "value" );
+    }
+
+    TEST( StackHashMapTests, InsertOrAssign_Heap )
+    {
+        StackHashMap<int, int, 2> map;
+        map[1] = 10;
+        map[2] = 20;
+        map[3] = 30; // Forces heap transition
+
+        map.insertOrAssign( 2, 999 );
+
+        EXPECT_EQ( map[2], 999 );
+        EXPECT_EQ( map.size(), 3 );
+    }
+
+    //=====================================================================
     // Lookup - count()
     //=====================================================================
 
