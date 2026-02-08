@@ -4,7 +4,7 @@
 
 ### Added
 
-- **StackHashMap** and **StackHashSet**: Added `forEach()` method for iteration without exposing iterators
+- NIL
 
 ### Changed
 
@@ -25,6 +25,12 @@
 ### Security
 
 - NIL
+
+## [0.4.1] - 2026-02-08
+
+### Added
+
+- **StackHashMap** and **StackHashSet**: Added `forEach()` method for iteration without exposing iterators
 
 ## [0.4.0] - 2026-02-08
 
