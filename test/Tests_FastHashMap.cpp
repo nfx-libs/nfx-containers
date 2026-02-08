@@ -3075,4 +3075,286 @@ namespace nfx::containers::test
         EXPECT_EQ( map1.size(), 0 );
         EXPECT_TRUE( map1.isEmpty() );
     }
+
+    //=====================================================================
+    // extract() tests
+    //=====================================================================
+
+    TEST( FastHashMapTests, Extract_BasicOperation )
+    {
+        FastHashMap<std::string, int> map;
+        map.insertOrAssign( "apple", 100 );
+        map.insertOrAssign( "banana", 200 );
+        map.insertOrAssign( "cherry", 300 );
+
+        EXPECT_EQ( map.size(), 3 );
+
+        auto extracted = map.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( extracted->first, "banana" );
+        EXPECT_EQ( extracted->second, 200 );
+        EXPECT_EQ( map.size(), 2 );
+        EXPECT_FALSE( map.contains( "banana" ) );
+        EXPECT_TRUE( map.contains( "apple" ) );
+        EXPECT_TRUE( map.contains( "cherry" ) );
+    }
+
+    TEST( FastHashMapTests, Extract_NonExistent )
+    {
+        FastHashMap<std::string, int> map;
+        map.insertOrAssign( "exists", 42 );
+
+        auto extracted = map.extract( "missing" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( map.size(), 1 );
+        EXPECT_TRUE( map.contains( "exists" ) );
+    }
+
+    TEST( FastHashMapTests, Extract_HeterogeneousLookup )
+    {
+        FastHashMap<std::string, int> map;
+        map.insertOrAssign( "key", 999 );
+
+        // Extract using string_view
+        std::string_view sv = "key";
+        auto extracted = map.extract( sv );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( extracted->first, "key" );
+        EXPECT_EQ( extracted->second, 999 );
+        EXPECT_EQ( map.size(), 0 );
+    }
+
+    TEST( FastHashMapTests, Extract_MoveSemantics )
+    {
+        FastHashMap<std::string, std::vector<int>> map;
+        std::vector<int> data = { 1, 2, 3, 4, 5 };
+        map.insertOrAssign( "vec", std::move( data ) );
+
+        auto extracted = map.extract( "vec" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( extracted->second.size(), 5 );
+        EXPECT_EQ( extracted->second[0], 1 );
+        EXPECT_EQ( extracted->second[4], 5 );
+    }
+
+    TEST( FastHashMapTests, Extract_FromEmpty )
+    {
+        FastHashMap<std::string, int> map;
+
+        auto extracted = map.extract( "anything" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( map.size(), 0 );
+    }
+
+    TEST( FastHashMapTests, Extract_AllElements )
+    {
+        FastHashMap<std::string, int> map = {
+            { "first", 1 },
+            { "second", 2 },
+            { "third", 3 } };
+
+        auto e1 = map.extract( "first" );
+        auto e2 = map.extract( "second" );
+        auto e3 = map.extract( "third" );
+
+        ASSERT_TRUE( e1.has_value() );
+        ASSERT_TRUE( e2.has_value() );
+        ASSERT_TRUE( e3.has_value() );
+
+        EXPECT_EQ( map.size(), 0 );
+        EXPECT_TRUE( map.isEmpty() );
+    }
+
+    //=====================================================================
+    // merge() tests
+    //=====================================================================
+
+    TEST( FastHashMapTests, Merge_BasicOperation )
+    {
+        FastHashMap<std::string, int> map1;
+        map1.insertOrAssign( "apple", 100 );
+        map1.insertOrAssign( "banana", 200 );
+
+        FastHashMap<std::string, int> map2;
+        map2.insertOrAssign( "cherry", 300 );
+        map2.insertOrAssign( "date", 400 );
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 4 );
+        EXPECT_EQ( *map1.find( "apple" ), 100 );
+        EXPECT_EQ( *map1.find( "banana" ), 200 );
+        EXPECT_EQ( *map1.find( "cherry" ), 300 );
+        EXPECT_EQ( *map1.find( "date" ), 400 );
+
+        // map2 should be empty after successful merge
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_TRUE( map2.isEmpty() );
+    }
+
+    TEST( FastHashMapTests, Merge_WithDuplicates )
+    {
+        FastHashMap<std::string, int> map1;
+        map1.insertOrAssign( "apple", 100 );
+        map1.insertOrAssign( "banana", 200 );
+
+        FastHashMap<std::string, int> map2;
+        map2.insertOrAssign( "apple", 999 ); // Duplicate - should NOT be merged
+        map2.insertOrAssign( "cherry", 300 );
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 3 );
+        EXPECT_EQ( *map1.find( "apple" ), 100 ); // Original value preserved
+        EXPECT_EQ( *map1.find( "banana" ), 200 );
+        EXPECT_EQ( *map1.find( "cherry" ), 300 );
+
+        // map2 should still contain the duplicate that wasn't merged
+        EXPECT_EQ( map2.size(), 1 );
+        EXPECT_EQ( *map2.find( "apple" ), 999 );
+    }
+
+    TEST( FastHashMapTests, Merge_EmptySource )
+    {
+        FastHashMap<std::string, int> map1;
+        map1.insertOrAssign( "key", 42 );
+
+        FastHashMap<std::string, int> map2; // Empty
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 1 );
+        EXPECT_EQ( *map1.find( "key" ), 42 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( FastHashMapTests, Merge_EmptyDestination )
+    {
+        FastHashMap<std::string, int> map1; // Empty
+
+        FastHashMap<std::string, int> map2;
+        map2.insertOrAssign( "alpha", 1 );
+        map2.insertOrAssign( "beta", 2 );
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( *map1.find( "alpha" ), 1 );
+        EXPECT_EQ( *map1.find( "beta" ), 2 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( FastHashMapTests, Merge_BothEmpty )
+    {
+        FastHashMap<std::string, int> map1;
+        FastHashMap<std::string, int> map2;
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 0 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( FastHashMapTests, Merge_RvalueReference )
+    {
+        FastHashMap<std::string, int> map1;
+        map1.insertOrAssign( "existing", 100 );
+
+        FastHashMap<std::string, int> map2;
+        map2.insertOrAssign( "new", 200 );
+
+        map1.merge( std::move( map2 ) );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( *map1.find( "existing" ), 100 );
+        EXPECT_EQ( *map1.find( "new" ), 200 );
+    }
+
+    TEST( FastHashMapTests, Merge_AllDuplicates )
+    {
+        FastHashMap<std::string, int> map1 = {
+            { "a", 1 },
+            { "b", 2 },
+            { "c", 3 } };
+
+        FastHashMap<std::string, int> map2 = {
+            { "a", 10 },
+            { "b", 20 },
+            { "c", 30 } };
+
+        map1.merge( map2 );
+
+        // All keys were duplicates, so map1 unchanged
+        EXPECT_EQ( map1.size(), 3 );
+        EXPECT_EQ( *map1.find( "a" ), 1 );
+        EXPECT_EQ( *map1.find( "b" ), 2 );
+        EXPECT_EQ( *map1.find( "c" ), 3 );
+
+        // map2 still contains all elements (none were merged)
+        EXPECT_EQ( map2.size(), 3 );
+        EXPECT_EQ( *map2.find( "a" ), 10 );
+        EXPECT_EQ( *map2.find( "b" ), 20 );
+        EXPECT_EQ( *map2.find( "c" ), 30 );
+    }
+
+    TEST( FastHashMapTests, Merge_LargeDataset )
+    {
+        FastHashMap<int, int> map1;
+        FastHashMap<int, int> map2;
+
+        // map1: even numbers 0-98
+        for ( int i = 0; i < 100; i += 2 )
+        {
+            map1.insertOrAssign( i, i * 10 );
+        }
+
+        // map2: odd numbers 1-99
+        for ( int i = 1; i < 100; i += 2 )
+        {
+            map2.insertOrAssign( i, i * 10 );
+        }
+
+        map1.merge( map2 );
+
+        // Should have all 0-99
+        EXPECT_EQ( map1.size(), 100 );
+        EXPECT_EQ( map2.size(), 0 );
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            EXPECT_EQ( *map1.find( i ), i * 10 );
+        }
+    }
+
+    TEST( FastHashMapTests, Merge_ExtractMergeWorkflow )
+    {
+        // Demonstrate extract + merge workflow
+        FastHashMap<std::string, int> source = {
+            { "item1", 100 },
+            { "item2", 200 },
+            { "item3", 300 } };
+
+        FastHashMap<std::string, int> destination;
+
+        // Extract specific item
+        auto extracted = source.extract( "item2" );
+        ASSERT_TRUE( extracted.has_value() );
+
+        // Insert extracted item into destination
+        destination.insertOrAssign( std::move( extracted->first ), std::move( extracted->second ) );
+
+        // Merge remaining items
+        destination.merge( source );
+
+        EXPECT_EQ( destination.size(), 3 );
+        EXPECT_EQ( source.size(), 0 );
+        EXPECT_EQ( *destination.find( "item1" ), 100 );
+        EXPECT_EQ( *destination.find( "item2" ), 200 );
+        EXPECT_EQ( *destination.find( "item3" ), 300 );
+    }
 } // namespace nfx::containers::test

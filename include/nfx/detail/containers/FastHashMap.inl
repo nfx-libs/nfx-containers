@@ -502,6 +502,67 @@ namespace nfx::containers
         m_size = 0;
     }
 
+    template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    template <typename KeyType>
+    inline std::optional<std::pair<TKey, TValue>>
+    FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::extract( const KeyType& key )
+    {
+        const HashType hash( m_hasher( key ) );
+
+        size_t pos( static_cast<size_t>( hash & m_mask ) );
+        uint32_t distance( 0 );
+
+        while ( distance <= m_buckets[pos].distance && m_buckets[pos].occupied )
+        {
+            if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].data->first, key ) )
+            {
+                // Extract the key-value pair before erasing
+                std::pair<TKey, TValue> extracted( std::move( m_buckets[pos].data->first ), std::move( m_buckets[pos].data->second ) );
+
+                // Erase the element
+                eraseAtPosition( pos );
+                --m_size;
+
+                return extracted;
+            }
+            pos = ( pos + 1 ) & m_mask;
+            ++distance;
+        }
+
+        return std::nullopt;
+    }
+
+    template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::merge( FastHashMap& other )
+    {
+        // Try to insert each element from other into this map
+        for ( auto it = other.begin(); it != other.end(); )
+        {
+            // Try to insert without overwriting existing keys
+            if ( !contains( it->first ) )
+            {
+                // Extract from other and insert into this
+                auto extracted = other.extract( it->first );
+                if ( extracted )
+                {
+                    insertOrAssign( std::move( extracted->first ), std::move( extracted->second ) );
+                }
+                // Iterator is now invalid, restart from begin
+                it = other.begin();
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::merge( FastHashMap&& other )
+    {
+        merge( other );
+    }
+
     //----------------------------------------------
     // State inspection
     //----------------------------------------------

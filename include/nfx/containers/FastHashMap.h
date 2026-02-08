@@ -392,6 +392,34 @@ namespace nfx::containers
          */
         inline void clear() noexcept;
 
+        /**
+         * @brief Extract a key-value pair from the map without destroying it
+         * @tparam KeyType Key type (supports heterogeneous lookup for compatible types)
+         * @param key The key to extract
+         * @return std::optional containing the extracted key-value pair if found, std::nullopt otherwise
+         * @details Removes the element from the map and returns it without invoking destructors.
+         *          This is useful for transferring ownership or moving elements between containers.
+         * @note This function is marked [[nodiscard]] - the return value should not be ignored
+         */
+        template <typename KeyType = TKey>
+        [[nodiscard]] inline std::optional<std::pair<TKey, TValue>> extract( const KeyType& key );
+
+        /**
+         * @brief Merge another FastHashMap into this one
+         * @param other The map to merge from (elements are moved, not copied)
+         * @details Attempts to insert each element from other into this map.
+         *          Elements that already exist in this map are left in other.
+         *          After the operation, other contains only elements that were not inserted.
+         */
+        inline void merge( FastHashMap& other );
+
+        /**
+         * @brief Merge another FastHashMap into this one (rvalue overload)
+         * @param other The map to merge from (elements are moved)
+         * @details Same as merge(FastHashMap&) but accepts rvalue references.
+         */
+        inline void merge( FastHashMap&& other );
+
         //----------------------------------------------
         // State inspection
         //----------------------------------------------
