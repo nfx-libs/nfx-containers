@@ -4,7 +4,7 @@
 
 ### Added
 
-- NIL
+- **StackHashMap** and **StackHashSet**: Added `forEach()` method for iteration without exposing iterators
 
 ### Changed
 

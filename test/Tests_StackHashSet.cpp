@@ -743,4 +743,59 @@ namespace nfx::containers::test
         EXPECT_TRUE( set.contains( 5 ) );
     }
 
+    //=====================================================================
+    // Iteration - forEach()
+    //=====================================================================
+
+    TEST( StackHashSetTests, ForEach_Stack )
+    {
+        StackHashSet<int, 4> set{ 1, 2, 3 };
+
+        int sum{ 0 };
+        set.forEach( [&sum]( int value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 6 );
+    }
+
+    TEST( StackHashSetTests, ForEach_Heap )
+    {
+        StackHashSet<int, 2> set{ 1, 2, 3 };
+
+        int sum{ 0 };
+        set.forEach( [&sum]( int value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 6 );
+    }
+
+    TEST( StackHashSetTests, ForEach_Const )
+    {
+        const StackHashSet<int, 4> set{ 1, 2, 3 };
+
+        int sum{ 0 };
+        set.forEach( [&sum]( const int& value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 6 );
+    }
+
+    TEST( StackHashSetTests, ForEach_Empty )
+    {
+        StackHashSet<int> set;
+
+        int count{ 0 };
+        set.forEach( [&count]( int ) { ++count; } );
+
+        EXPECT_EQ( count, 0 );
+    }
+
+    TEST( StackHashSetTests, ForEach_Strings )
+    {
+        StackHashSet<std::string, 4> set{ "hello", "world" };
+
+        std::string concatenated;
+        set.forEach( [&concatenated]( const std::string& s ) { concatenated += s; } );
+
+        // Order is unspecified, but we should have both strings
+        EXPECT_TRUE( concatenated.find( "hello" ) != std::string::npos );
+        EXPECT_TRUE( concatenated.find( "world" ) != std::string::npos );
+    }
 } // namespace nfx::containers::test

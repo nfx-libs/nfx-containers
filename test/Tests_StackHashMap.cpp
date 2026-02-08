@@ -863,4 +863,58 @@ namespace nfx::containers::test
         EXPECT_EQ( map1[2], 20 );
         EXPECT_EQ( map1[3], 30 );
     }
+
+    //=====================================================================
+    // Iteration - forEach()
+    //=====================================================================
+
+    TEST( StackHashMapTests, ForEach_Stack )
+    {
+        StackHashMap<std::string, int, 4> map{ { "a", 1 }, { "b", 2 }, { "c", 3 } };
+
+        int sum{ 0 };
+        map.forEach( [&sum]( const std::string&, int value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 6 );
+    }
+
+    TEST( StackHashMapTests, ForEach_Heap )
+    {
+        StackHashMap<std::string, int, 2> map{ { "a", 1 }, { "b", 2 }, { "c", 3 } };
+
+        int sum{ 0 };
+        map.forEach( [&sum]( const std::string&, int value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 6 );
+    }
+
+    TEST( StackHashMapTests, ForEach_Modify )
+    {
+        StackHashMap<std::string, int, 4> map{ { "a", 1 }, { "b", 2 } };
+
+        map.forEach( []( const std::string&, int& value ) { value *= 2; } );
+
+        EXPECT_EQ( map["a"], 2 );
+        EXPECT_EQ( map["b"], 4 );
+    }
+
+    TEST( StackHashMapTests, ForEach_Const )
+    {
+        const StackHashMap<std::string, int, 4> map{ { "a", 1 }, { "b", 2 } };
+
+        int sum{ 0 };
+        map.forEach( [&sum]( const std::string&, const int& value ) { sum += value; } );
+
+        EXPECT_EQ( sum, 3 );
+    }
+
+    TEST( StackHashMapTests, ForEach_Empty )
+    {
+        StackHashMap<std::string, int> map;
+
+        int count{ 0 };
+        map.forEach( [&count]( const std::string&, int ) { ++count; } );
+
+        EXPECT_EQ( count, 0 );
+    }
 } // namespace nfx::containers::test

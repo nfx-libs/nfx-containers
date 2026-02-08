@@ -27,10 +27,6 @@
  * @brief Implementation of StackHashSet template methods
  */
 
-#pragma once
-
-#include <stdexcept>
-
 namespace nfx::containers
 {
     //=====================================================================
@@ -360,5 +356,49 @@ namespace nfx::containers
             }
         }
         m_stackSize = 0;
+    }
+
+    //=====================================================================
+    // Iteration
+    //=====================================================================
+
+    template <typename TKey, size_t N, typename KeyEqual>
+    template <typename Func>
+    inline void StackHashSet<TKey, N, KeyEqual>::forEach( Func&& func )
+    {
+        if ( m_heap )
+        {
+            for ( auto& key : *m_heap )
+            {
+                func( key );
+            }
+        }
+        else
+        {
+            for ( size_t i{ 0 }; i < m_stackSize; ++i )
+            {
+                func( *m_stack[i].data );
+            }
+        }
+    }
+
+    template <typename TKey, size_t N, typename KeyEqual>
+    template <typename Func>
+    inline void StackHashSet<TKey, N, KeyEqual>::forEach( Func&& func ) const
+    {
+        if ( m_heap )
+        {
+            for ( const auto& key : *m_heap )
+            {
+                func( key );
+            }
+        }
+        else
+        {
+            for ( size_t i{ 0 }; i < m_stackSize; ++i )
+            {
+                func( *m_stack[i].data );
+            }
+        }
     }
 } // namespace nfx::containers

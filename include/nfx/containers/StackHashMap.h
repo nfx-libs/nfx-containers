@@ -328,6 +328,32 @@ namespace nfx::containers
         [[nodiscard]] inline bool contains( const K& key ) const
             requires requires( KeyEqual eq, const K& k, const TKey& t ) { eq( k, t ); };
 
+        //----------------------------------------------
+        // Iteration
+        //----------------------------------------------
+
+        /**
+         * @brief Apply a function to each key-value pair
+         * @tparam Func Function type with signature void(const TKey&, TValue&) or compatible
+         * @param func Function to apply to each element
+         * @details Iterates over all elements in unspecified order.
+         *          For stack storage, iteration order matches insertion order (up to N elements).
+         *          For heap storage, iteration order is unspecified (hash table order).
+         */
+        template <typename Func>
+        inline void forEach( Func&& func );
+
+        /**
+         * @brief Apply a function to each key-value pair (const version)
+         * @tparam Func Function type with signature void(const TKey&, const TValue&) or compatible
+         * @param func Function to apply to each element
+         * @details Iterates over all elements in unspecified order.
+         *          For stack storage, iteration order matches insertion order (up to N elements).
+         *          For heap storage, iteration order is unspecified (hash table order).
+         */
+        template <typename Func>
+        inline void forEach( Func&& func ) const;
+
     private:
         //----------------------------------------------
         // Internal storage

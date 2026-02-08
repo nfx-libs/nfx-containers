@@ -247,6 +247,32 @@ namespace nfx::containers
          */
         inline const TKey& at( const TKey& key ) const;
 
+        //----------------------------------------------
+        // Iteration
+        //----------------------------------------------
+
+        /**
+         * @brief Apply a function to each key
+         * @tparam Func Function type with signature void(TKey&) or compatible
+         * @param func Function to apply to each element
+         * @details Iterates over all elements in unspecified order.
+         *          For stack storage, iteration order matches insertion order (up to N elements).
+         *          For heap storage, iteration order is unspecified (hash table order).
+         */
+        template <typename Func>
+        inline void forEach( Func&& func );
+
+        /**
+         * @brief Apply a function to each key (const version)
+         * @tparam Func Function type with signature void(const TKey&) or compatible
+         * @param func Function to apply to each element
+         * @details Iterates over all elements in unspecified order.
+         *          For stack storage, iteration order matches insertion order (up to N elements).
+         *          For heap storage, iteration order is unspecified (hash table order).
+         */
+        template <typename Func>
+        inline void forEach( Func&& func ) const;
+
     private:
         //----------------------------------------------
         // Internal storage
