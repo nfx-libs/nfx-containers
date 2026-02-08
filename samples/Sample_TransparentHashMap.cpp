@@ -29,12 +29,12 @@
  *          with transparent lookup and heterogeneous key support
  */
 
+#include <nfx/Containers.h>
+
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <nfx/Containers.h>
 
 int main()
 {

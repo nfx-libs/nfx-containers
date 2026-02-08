@@ -29,11 +29,11 @@
  *          with guaranteed O(1) lookup and zero collision overhead
  */
 
+#include <nfx/Containers.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <nfx/Containers.h>
 
 int main()
 {
