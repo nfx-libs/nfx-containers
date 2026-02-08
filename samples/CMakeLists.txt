@@ -22,6 +22,7 @@ list(APPEND sample_sources
     Sample_OrderedHashMap.cpp
     Sample_OrderedHashSet.cpp
     Sample_PerfectHashMap.cpp
+    Sample_StackHashMap.cpp
     Sample_StackVector.cpp
     Sample_TransparentHashMap.cpp
     Sample_TransparentHashSet.cpp

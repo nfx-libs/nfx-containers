@@ -76,6 +76,7 @@ list(APPEND test_sources
     Tests_OrderedHashMap.cpp
     Tests_OrderedHashSet.cpp
     Tests_PerfectHashMap.cpp
+    Tests_StackHashMap.cpp
     Tests_StackVector.cpp
     Tests_TransparentHashMap.cpp
     Tests_TransparentHashSet.cpp
