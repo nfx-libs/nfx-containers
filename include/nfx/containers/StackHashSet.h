@@ -211,12 +211,12 @@ namespace nfx::containers
         //----------------------------------------------
 
         /**
-         * @brief Count occurrences of key in set
+         * @brief Find key in the set (const pointer version)
          * @param key The key to search for
-         * @return 1 if key exists, 0 otherwise (sets have unique keys)
+         * @return Pointer to the key if found, nullptr otherwise
          * @note This function is marked [[nodiscard]] - the return value should not be ignored
          */
-        [[nodiscard]] inline size_t count( const TKey& key ) const;
+        [[nodiscard]] inline const TKey* find( const TKey& key ) const noexcept;
 
         /**
          * @brief Check if a key exists in the set
@@ -237,6 +237,15 @@ namespace nfx::containers
         template <typename K>
         [[nodiscard]] inline bool contains( const K& key ) const
             requires requires( KeyEqual eq, const K& k, const TKey& t ) { eq( k, t ); };
+
+        /**
+         * @brief Access key in the set with bounds checking
+         * @param key The key to search for
+         * @return Const reference to the stored key
+         * @throws std::out_of_range if key is not found
+         * @note For sets, at() returns the key itself (useful for retrieving stored key)
+         */
+        inline const TKey& at( const TKey& key ) const;
 
     private:
         //----------------------------------------------

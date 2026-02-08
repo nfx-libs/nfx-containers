@@ -171,10 +171,10 @@ namespace nfx::containers
     template <typename KeyType>
     inline const TKey& FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::at( const KeyType& key ) const
     {
-        const TKey* found = find( key );
+        const TKey* found{ find( key ) };
         if ( !found )
         {
-            throw std::out_of_range( "FastHashSet::at: key not found" );
+            throw std::out_of_range{ "FastHashSet::at: key not found" };
         }
         return *found;
     }
