@@ -466,6 +466,83 @@ namespace nfx::containers
         }
     }
 
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    template <typename KeyType>
+    inline std::optional<TKey> OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::extract( const KeyType& key )
+    {
+        const HashType hash( m_hasher( key ) );
+
+        size_t pos( static_cast<size_t>( hash & m_mask ) );
+        uint32_t distance( 0 );
+
+        while ( distance <= m_buckets[pos].distance && m_buckets[pos].occupied )
+        {
+            if ( m_buckets[pos].hash == hash && keysEqual( m_buckets[pos].node->data, key ) )
+            {
+                Node* nodeToExtract = m_buckets[pos].node;
+
+                // Extract the key before unlinking
+                std::optional<TKey> extracted{ std::move( nodeToExtract->data ) };
+
+                // Unlink from doubly-linked list
+                unlinkNode( nodeToExtract );
+
+                // Robin Hood backward shift deletion
+                size_t nextPos{ ( pos + 1 ) & m_mask };
+
+                while ( m_buckets[nextPos].occupied && m_buckets[nextPos].distance > 0 )
+                {
+                    m_buckets[pos] = std::move( m_buckets[nextPos] );
+                    --m_buckets[pos].distance;
+                    pos = nextPos;
+                    nextPos = ( nextPos + 1 ) & m_mask;
+                }
+
+                m_buckets[pos] = Bucket{};
+
+                // Delete the node
+                delete nodeToExtract;
+                --m_size;
+
+                return extracted;
+            }
+            pos = ( pos + 1 ) & m_mask;
+            ++distance;
+        }
+
+        return std::nullopt;
+    }
+
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::merge( OrderedHashSet& other )
+    {
+        auto it = other.begin();
+        while ( it != other.end() )
+        {
+            if ( !contains( *it ) )
+            {
+                // Extract from other and insert into this
+                auto extracted = other.extract( *it );
+                if ( extracted )
+                {
+                    insert( std::move( *extracted ) );
+                }
+                // Iterator is now invalid, restart from begin
+                it = other.begin();
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+    template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
+    inline void OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::merge( OrderedHashSet&& other )
+    {
+        merge( other );
+    }
+
     //----------------------------------------------
     // State inspection
     //----------------------------------------------
@@ -821,15 +898,13 @@ namespace nfx::containers
 
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::Iterator( Node* node )
-        : m_node{ node }
-        , m_container{ nullptr }
+        : m_node{ node }, m_container{ nullptr }
     {
     }
 
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::Iterator::Iterator( Node* node, const OrderedHashSet* container )
-        : m_node{ node }
-        , m_container{ container }
+        : m_node{ node }, m_container{ container }
     {
     }
 
@@ -919,22 +994,19 @@ namespace nfx::containers
 
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::ConstIterator( const Node* node )
-        : m_node{ node }
-        , m_container{ nullptr }
+        : m_node{ node }, m_container{ nullptr }
     {
     }
 
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::ConstIterator( const Node* node, const OrderedHashSet* container )
-        : m_node{ node }
-        , m_container{ container }
+        : m_node{ node }, m_container{ container }
     {
     }
 
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::ConstIterator::ConstIterator( const Iterator& it )
-        : m_node{ it.m_node }
-        , m_container{ it.m_container }
+        : m_node{ it.m_node }, m_container{ it.m_container }
     {
     }
 

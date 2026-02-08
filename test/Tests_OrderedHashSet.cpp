@@ -798,4 +798,257 @@ namespace nfx::containers::test
 
         EXPECT_EQ( set.size(), 1 );
     }
+
+    //=====================================================================
+    // Extract operation tests
+    //=====================================================================
+
+    TEST( OrderedHashSetTests, Extract_BasicOperation )
+    {
+        OrderedHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        EXPECT_EQ( set.size(), 3 );
+        EXPECT_TRUE( set.contains( "banana" ) );
+
+        auto extracted = set.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( *extracted, "banana" );
+        EXPECT_EQ( set.size(), 2 );
+        EXPECT_FALSE( set.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashSetTests, Extract_PreservesOrder )
+    {
+        OrderedHashSet<std::string> set = { "first", "second", "third", "fourth" };
+
+        (void)set.extract( "second" );
+
+        std::vector<std::string> keys;
+        for ( const auto& key : set )
+        {
+            keys.push_back( key );
+        }
+
+        EXPECT_EQ( keys.size(), 3 );
+        EXPECT_EQ( keys[0], "first" );
+        EXPECT_EQ( keys[1], "third" );
+        EXPECT_EQ( keys[2], "fourth" );
+    }
+
+    TEST( OrderedHashSetTests, Extract_NonExistent )
+    {
+        OrderedHashSet<std::string> set = { "apple", "banana" };
+
+        auto extracted = set.extract( "cherry" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( set.size(), 2 );
+    }
+
+    TEST( OrderedHashSetTests, Extract_HeterogeneousLookup )
+    {
+        OrderedHashSet<std::string> set = { "apple", "banana" };
+
+        auto extracted = set.extract( std::string_view( "banana" ) );
+
+        ASSERT_TRUE( extracted.has_value() );
+        EXPECT_EQ( *extracted, "banana" );
+    }
+
+    TEST( OrderedHashSetTests, Extract_MoveSemantics )
+    {
+        OrderedHashSet<std::string> set = { "apple", "banana" };
+
+        auto extracted = set.extract( "banana" );
+
+        ASSERT_TRUE( extracted.has_value() );
+        std::string moved = std::move( *extracted );
+        EXPECT_EQ( moved, "banana" );
+    }
+
+    TEST( OrderedHashSetTests, Extract_FromEmpty )
+    {
+        OrderedHashSet<std::string> set;
+
+        auto extracted = set.extract( "anything" );
+
+        EXPECT_FALSE( extracted.has_value() );
+        EXPECT_EQ( set.size(), 0 );
+    }
+
+    TEST( OrderedHashSetTests, Extract_AllElements )
+    {
+        OrderedHashSet<std::string> set = { "a", "b", "c" };
+
+        auto e1 = set.extract( "a" );
+        auto e2 = set.extract( "b" );
+        auto e3 = set.extract( "c" );
+
+        EXPECT_TRUE( e1.has_value() );
+        EXPECT_TRUE( e2.has_value() );
+        EXPECT_TRUE( e3.has_value() );
+        EXPECT_EQ( set.size(), 0 );
+        EXPECT_TRUE( set.isEmpty() );
+    }
+
+    //=====================================================================
+    // Merge operation tests
+    //=====================================================================
+
+    TEST( OrderedHashSetTests, Merge_BasicOperation )
+    {
+        OrderedHashSet<std::string> set1 = { "apple", "banana" };
+        OrderedHashSet<std::string> set2 = { "cherry", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+        EXPECT_TRUE( set1.contains( "cherry" ) );
+        EXPECT_TRUE( set1.contains( "date" ) );
+    }
+
+    TEST( OrderedHashSetTests, Merge_PreservesOrder )
+    {
+        OrderedHashSet<std::string> set1 = { "a", "b" };
+        OrderedHashSet<std::string> set2 = { "c", "d" };
+
+        set1.merge( set2 );
+
+        std::vector<std::string> keys;
+        for ( const auto& key : set1 )
+        {
+            keys.push_back( key );
+        }
+
+        EXPECT_EQ( keys.size(), 4 );
+        EXPECT_EQ( keys[0], "a" );
+        EXPECT_EQ( keys[1], "b" );
+        EXPECT_EQ( keys[2], "c" );
+        EXPECT_EQ( keys[3], "d" );
+    }
+
+    TEST( OrderedHashSetTests, Merge_WithDuplicates )
+    {
+        OrderedHashSet<std::string> set1 = { "apple", "banana" };
+        OrderedHashSet<std::string> set2 = { "cherry", "apple", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 );
+        EXPECT_EQ( set2.size(), 1 );
+        EXPECT_TRUE( set2.contains( "apple" ) );
+        EXPECT_FALSE( set2.contains( "cherry" ) );
+        EXPECT_FALSE( set2.contains( "date" ) );
+    }
+
+    TEST( OrderedHashSetTests, Merge_EmptySource )
+    {
+        OrderedHashSet<std::string> set1 = { "apple", "banana" };
+        OrderedHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( OrderedHashSetTests, Merge_EmptyDestination )
+    {
+        OrderedHashSet<std::string> set1;
+        OrderedHashSet<std::string> set2 = { "apple", "banana" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashSetTests, Merge_BothEmpty )
+    {
+        OrderedHashSet<std::string> set1;
+        OrderedHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 0 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( OrderedHashSetTests, Merge_RvalueReference )
+    {
+        OrderedHashSet<std::string> set1 = { "apple" };
+        OrderedHashSet<std::string> set2 = { "banana" };
+
+        set1.merge( std::move( set2 ) );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+    }
+
+    TEST( OrderedHashSetTests, Merge_AllDuplicates )
+    {
+        OrderedHashSet<std::string> set1 = { "apple", "banana", "cherry" };
+        OrderedHashSet<std::string> set2 = { "apple", "banana", "cherry" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 3 );
+        EXPECT_EQ( set2.size(), 3 );
+    }
+
+    TEST( OrderedHashSetTests, Merge_LargeDataset )
+    {
+        OrderedHashSet<int> set1;
+        OrderedHashSet<int> set2;
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            set1.insert( i );
+        }
+
+        for ( int i = 50; i < 150; ++i )
+        {
+            set2.insert( i );
+        }
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 150 );
+        EXPECT_EQ( set2.size(), 50 );
+
+        for ( int i = 50; i < 100; ++i )
+        {
+            EXPECT_TRUE( set2.contains( i ) );
+        }
+    }
+
+    TEST( OrderedHashSetTests, Merge_ExtractMergeWorkflow )
+    {
+        OrderedHashSet<std::string> set1 = { "apple", "banana" };
+        OrderedHashSet<std::string> set2 = { "cherry", "date" };
+        OrderedHashSet<std::string> set3;
+
+        auto extracted = set1.extract( "banana" );
+        if ( extracted )
+        {
+            set3.insert( std::move( *extracted ) );
+        }
+
+        set3.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 1 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_EQ( set3.size(), 3 );
+        EXPECT_TRUE( set3.contains( "banana" ) );
+        EXPECT_TRUE( set3.contains( "cherry" ) );
+        EXPECT_TRUE( set3.contains( "date" ) );
+    }
+
 } // namespace nfx::containers::test

@@ -465,5 +465,103 @@ int main()
         std::cout << "\n";
     }
 
+    //=====================================================================
+    // 17. Extract operation
+    //=====================================================================
+    {
+        std::cout << "17. Extract operation\n";
+        std::cout << "---------------------\n";
+
+        OrderedHashSet<std::string> set = { "first", "second", "third", "fourth" };
+
+        std::cout << "Original order: ";
+        for ( const auto& key : set )
+        {
+            std::cout << key << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "Set size before extract: " << set.size() << "\n";
+
+        auto extracted = set.extract( "second" );
+
+        if ( extracted )
+        {
+            std::cout << "Extracted: " << *extracted << "\n";
+        }
+
+        std::cout << "Set size after extract: " << set.size() << "\n";
+        std::cout << "Order after extract: ";
+        for ( const auto& key : set )
+        {
+            std::cout << key << " ";
+        }
+        std::cout << "\n";
+
+        // Extract non-existent element
+        auto notFound = set.extract( "nonexistent" );
+        std::cout << "Extract 'nonexistent': " << ( notFound ? "found" : "not found" ) << "\n";
+
+        // Heterogeneous lookup with string_view
+        auto extracted2 = set.extract( std::string_view( "third" ) );
+        if ( extracted2 )
+        {
+            std::cout << "Extracted with string_view: " << *extracted2 << "\n";
+        }
+
+        std::cout << "Note: Insertion order is preserved after extraction!\n";
+        std::cout << "\n";
+    }
+
+    //=====================================================================
+    // 18. Merge operation
+    //=====================================================================
+    {
+        std::cout << "18. Merge operation\n";
+        std::cout << "-------------------\n";
+
+        OrderedHashSet<std::string> set1 = { "apple", "banana" };
+        OrderedHashSet<std::string> set2 = { "cherry", "apple", "date" }; // "apple" is duplicate
+
+        std::cout << "set1 order before merge: ";
+        for ( const auto& key : set1 )
+        {
+            std::cout << key << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "set2 order before merge: ";
+        for ( const auto& key : set2 )
+        {
+            std::cout << key << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "set1 size before merge: " << set1.size() << "\n";
+        std::cout << "set2 size before merge: " << set2.size() << "\n";
+
+        set1.merge( set2 );
+
+        std::cout << "set1 size after merge: " << set1.size() << "\n";
+        std::cout << "set2 size after merge: " << set2.size() << " (contains duplicates only)\n";
+
+        std::cout << "\nset1 order after merge: ";
+        for ( const auto& key : set1 )
+        {
+            std::cout << key << " ";
+        }
+        std::cout << "\n";
+
+        std::cout << "\nset2 remaining contents:\n";
+        for ( const auto& key : set2 )
+        {
+            std::cout << "  " << key << " (duplicate)\n";
+        }
+
+        std::cout << "Note: Duplicates remain in source set, unique elements are moved\n";
+        std::cout << "      Insertion order is preserved in both sets!\n";
+        std::cout << "\n";
+    }
+
     return 0;
 }
