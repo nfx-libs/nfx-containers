@@ -1025,4 +1025,199 @@ namespace nfx::containers::test
         EXPECT_EQ( map1.size(), 0 );
         EXPECT_TRUE( map1.empty() );
     }
+
+    //=====================================================================
+    // Extract operation tests (inherited from std::unordered_map)
+    //=====================================================================
+
+    TEST( TransparentHashMapTests, Extract_BasicOperation )
+    {
+        TransparentHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 }, { "cherry", 300 } };
+
+        EXPECT_EQ( map.size(), 3 );
+        EXPECT_TRUE( map.contains( "banana" ) );
+
+        auto node = map.extract( "banana" );
+
+        ASSERT_FALSE( node.empty() );
+        EXPECT_EQ( node.key(), "banana" );
+        EXPECT_EQ( node.mapped(), 200 );
+        EXPECT_EQ( map.size(), 2 );
+        EXPECT_FALSE( map.contains( "banana" ) );
+    }
+
+    TEST( TransparentHashMapTests, Extract_NonExistent )
+    {
+        TransparentHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 } };
+
+        auto node = map.extract( "cherry" );
+
+        EXPECT_TRUE( node.empty() );
+        EXPECT_EQ( map.size(), 2 );
+    }
+
+    TEST( TransparentHashMapTests, Extract_MoveSemantics )
+    {
+        TransparentHashMap<std::string, int> map = { { "apple", 100 }, { "banana", 200 } };
+
+        auto node = map.extract( "banana" );
+
+        ASSERT_FALSE( node.empty() );
+        std::string key = std::move( node.key() );
+        int value = std::move( node.mapped() );
+        EXPECT_EQ( key, "banana" );
+        EXPECT_EQ( value, 200 );
+    }
+
+    TEST( TransparentHashMapTests, Extract_FromEmpty )
+    {
+        TransparentHashMap<std::string, int> map;
+
+        auto node = map.extract( "anything" );
+
+        EXPECT_TRUE( node.empty() );
+        EXPECT_EQ( map.size(), 0 );
+    }
+
+    TEST( TransparentHashMapTests, Extract_AllElements )
+    {
+        TransparentHashMap<std::string, int> map = { { "a", 1 }, { "b", 2 }, { "c", 3 } };
+
+        auto n1 = map.extract( "a" );
+        auto n2 = map.extract( "b" );
+        auto n3 = map.extract( "c" );
+
+        EXPECT_FALSE( n1.empty() );
+        EXPECT_FALSE( n2.empty() );
+        EXPECT_FALSE( n3.empty() );
+        EXPECT_EQ( map.size(), 0 );
+        EXPECT_TRUE( map.empty() );
+    }
+
+    //=====================================================================
+    // Merge operation tests (inherited from std::unordered_map)
+    //=====================================================================
+
+    TEST( TransparentHashMapTests, Merge_BasicOperation )
+    {
+        TransparentHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        TransparentHashMap<std::string, int> map2 = { { "cherry", 300 }, { "date", 400 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 4 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_TRUE( map1.contains( "apple" ) );
+        EXPECT_TRUE( map1.contains( "banana" ) );
+        EXPECT_TRUE( map1.contains( "cherry" ) );
+        EXPECT_TRUE( map1.contains( "date" ) );
+    }
+
+    TEST( TransparentHashMapTests, Merge_WithDuplicates )
+    {
+        TransparentHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        TransparentHashMap<std::string, int> map2 = { { "cherry", 300 }, { "apple", 999 }, { "date", 400 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 4 );
+        EXPECT_EQ( map2.size(), 1 );
+        EXPECT_TRUE( map2.contains( "apple" ) );
+        EXPECT_EQ( map2.at( "apple" ), 999 );
+        EXPECT_EQ( map1.at( "apple" ), 100 ); // Original value preserved
+    }
+
+    TEST( TransparentHashMapTests, Merge_EmptySource )
+    {
+        TransparentHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        TransparentHashMap<std::string, int> map2;
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( TransparentHashMapTests, Merge_EmptyDestination )
+    {
+        TransparentHashMap<std::string, int> map1;
+        TransparentHashMap<std::string, int> map2 = { { "apple", 100 }, { "banana", 200 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 2 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_TRUE( map1.contains( "apple" ) );
+        EXPECT_TRUE( map1.contains( "banana" ) );
+    }
+
+    TEST( TransparentHashMapTests, Merge_BothEmpty )
+    {
+        TransparentHashMap<std::string, int> map1;
+        TransparentHashMap<std::string, int> map2;
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 0 );
+        EXPECT_EQ( map2.size(), 0 );
+    }
+
+    TEST( TransparentHashMapTests, Merge_AllDuplicates )
+    {
+        TransparentHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 }, { "cherry", 300 } };
+        TransparentHashMap<std::string, int> map2 = { { "apple", 999 }, { "banana", 888 }, { "cherry", 777 } };
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 3 );
+        EXPECT_EQ( map2.size(), 3 );
+    }
+
+    TEST( TransparentHashMapTests, Merge_LargeDataset )
+    {
+        TransparentHashMap<int, int> map1;
+        TransparentHashMap<int, int> map2;
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            map1[i] = i * 10;
+        }
+
+        for ( int i = 50; i < 150; ++i )
+        {
+            map2[i] = i * 20;
+        }
+
+        map1.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 150 );
+        EXPECT_EQ( map2.size(), 50 );
+
+        for ( int i = 50; i < 100; ++i )
+        {
+            EXPECT_TRUE( map2.contains( i ) );
+        }
+    }
+
+    TEST( TransparentHashMapTests, Merge_ExtractMergeWorkflow )
+    {
+        TransparentHashMap<std::string, int> map1 = { { "apple", 100 }, { "banana", 200 } };
+        TransparentHashMap<std::string, int> map2 = { { "cherry", 300 }, { "date", 400 } };
+        TransparentHashMap<std::string, int> map3;
+
+        auto node = map1.extract( "banana" );
+        if ( !node.empty() )
+        {
+            map3.insert( std::move( node ) );
+        }
+
+        map3.merge( map2 );
+
+        EXPECT_EQ( map1.size(), 1 );
+        EXPECT_EQ( map2.size(), 0 );
+        EXPECT_EQ( map3.size(), 3 );
+        EXPECT_TRUE( map3.contains( "banana" ) );
+        EXPECT_TRUE( map3.contains( "cherry" ) );
+        EXPECT_TRUE( map3.contains( "date" ) );
+    }
 } // namespace nfx::containers::test

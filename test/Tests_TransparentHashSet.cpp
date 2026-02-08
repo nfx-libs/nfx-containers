@@ -998,4 +998,196 @@ namespace nfx::containers::test
         EXPECT_EQ( set1.size(), 0 );
         EXPECT_TRUE( set1.empty() );
     }
+
+    //=====================================================================
+    // Extract operation tests (inherited from std::unordered_set)
+    //=====================================================================
+
+    TEST( TransparentHashSetTests, Extract_BasicOperation )
+    {
+        TransparentHashSet<std::string> set = { "apple", "banana", "cherry" };
+
+        EXPECT_EQ( set.size(), 3 );
+        EXPECT_TRUE( set.contains( "banana" ) );
+
+        auto node = set.extract( "banana" );
+
+        ASSERT_FALSE( node.empty() );
+        EXPECT_EQ( node.value(), "banana" );
+        EXPECT_EQ( set.size(), 2 );
+        EXPECT_FALSE( set.contains( "banana" ) );
+    }
+
+    TEST( TransparentHashSetTests, Extract_NonExistent )
+    {
+        TransparentHashSet<std::string> set = { "apple", "banana" };
+
+        auto node = set.extract( "cherry" );
+
+        EXPECT_TRUE( node.empty() );
+        EXPECT_EQ( set.size(), 2 );
+    }
+
+    TEST( TransparentHashSetTests, Extract_MoveSemantics )
+    {
+        TransparentHashSet<std::string> set = { "apple", "banana" };
+
+        auto node = set.extract( "banana" );
+
+        ASSERT_FALSE( node.empty() );
+        std::string value = std::move( node.value() );
+        EXPECT_EQ( value, "banana" );
+    }
+
+    TEST( TransparentHashSetTests, Extract_FromEmpty )
+    {
+        TransparentHashSet<std::string> set;
+
+        auto node = set.extract( "anything" );
+
+        EXPECT_TRUE( node.empty() );
+        EXPECT_EQ( set.size(), 0 );
+    }
+
+    TEST( TransparentHashSetTests, Extract_AllElements )
+    {
+        TransparentHashSet<std::string> set = { "a", "b", "c" };
+
+        auto n1 = set.extract( "a" );
+        auto n2 = set.extract( "b" );
+        auto n3 = set.extract( "c" );
+
+        EXPECT_FALSE( n1.empty() );
+        EXPECT_FALSE( n2.empty() );
+        EXPECT_FALSE( n3.empty() );
+        EXPECT_EQ( set.size(), 0 );
+        EXPECT_TRUE( set.empty() );
+    }
+
+    //=====================================================================
+    // Merge operation tests (inherited from std::unordered_set)
+    //=====================================================================
+
+    TEST( TransparentHashSetTests, Merge_BasicOperation )
+    {
+        TransparentHashSet<std::string> set1 = { "apple", "banana" };
+        TransparentHashSet<std::string> set2 = { "cherry", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+        EXPECT_TRUE( set1.contains( "cherry" ) );
+        EXPECT_TRUE( set1.contains( "date" ) );
+    }
+
+    TEST( TransparentHashSetTests, Merge_WithDuplicates )
+    {
+        TransparentHashSet<std::string> set1 = { "apple", "banana" };
+        TransparentHashSet<std::string> set2 = { "cherry", "apple", "date" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 4 );
+        EXPECT_EQ( set2.size(), 1 );
+        EXPECT_TRUE( set2.contains( "apple" ) );
+        EXPECT_FALSE( set2.contains( "cherry" ) );
+        EXPECT_FALSE( set2.contains( "date" ) );
+    }
+
+    TEST( TransparentHashSetTests, Merge_EmptySource )
+    {
+        TransparentHashSet<std::string> set1 = { "apple", "banana" };
+        TransparentHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( TransparentHashSetTests, Merge_EmptyDestination )
+    {
+        TransparentHashSet<std::string> set1;
+        TransparentHashSet<std::string> set2 = { "apple", "banana" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 2 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_TRUE( set1.contains( "apple" ) );
+        EXPECT_TRUE( set1.contains( "banana" ) );
+    }
+
+    TEST( TransparentHashSetTests, Merge_BothEmpty )
+    {
+        TransparentHashSet<std::string> set1;
+        TransparentHashSet<std::string> set2;
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 0 );
+        EXPECT_EQ( set2.size(), 0 );
+    }
+
+    TEST( TransparentHashSetTests, Merge_AllDuplicates )
+    {
+        TransparentHashSet<std::string> set1 = { "apple", "banana", "cherry" };
+        TransparentHashSet<std::string> set2 = { "apple", "banana", "cherry" };
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 3 );
+        EXPECT_EQ( set2.size(), 3 );
+    }
+
+    TEST( TransparentHashSetTests, Merge_LargeDataset )
+    {
+        TransparentHashSet<int> set1;
+        TransparentHashSet<int> set2;
+
+        for ( int i = 0; i < 100; ++i )
+        {
+            set1.insert( i );
+        }
+
+        for ( int i = 50; i < 150; ++i )
+        {
+            set2.insert( i );
+        }
+
+        set1.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 150 );
+        EXPECT_EQ( set2.size(), 50 );
+
+        for ( int i = 50; i < 100; ++i )
+        {
+            EXPECT_TRUE( set2.contains( i ) );
+        }
+    }
+
+    TEST( TransparentHashSetTests, Merge_ExtractMergeWorkflow )
+    {
+        TransparentHashSet<std::string> set1 = { "apple", "banana" };
+        TransparentHashSet<std::string> set2 = { "cherry", "date" };
+        TransparentHashSet<std::string> set3;
+
+        auto node = set1.extract( "banana" );
+        if ( !node.empty() )
+        {
+            set3.insert( std::move( node ) );
+        }
+
+        set3.merge( set2 );
+
+        EXPECT_EQ( set1.size(), 1 );
+        EXPECT_EQ( set2.size(), 0 );
+        EXPECT_EQ( set3.size(), 3 );
+        EXPECT_TRUE( set3.contains( "banana" ) );
+        EXPECT_TRUE( set3.contains( "cherry" ) );
+        EXPECT_TRUE( set3.contains( "date" ) );
+    }
 } // namespace nfx::containers::test
