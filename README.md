@@ -49,6 +49,8 @@ It offers Robin Hood hash maps and sets for general use, displacement-based perf
 - **FastHashSet**: Robin Hood hash set with superior performance over `std::unordered_set`
 - **OrderedHashMap**: Insertion-order preserving hash map with bidirectional iterators
 - **OrderedHashSet**: Insertion-order preserving hash set with bidirectional iterators
+- **StackHashMap**: Small buffer optimization hash map with hybrid stack/heap storage
+- **StackHashSet**: Small buffer optimization hash set with hybrid stack/heap storage
 - **TransparentHashMap**: Enhanced `std::unordered_map` with heterogeneous lookup
 - **TransparentHashSet**: Enhanced `std::unordered_set` with heterogeneous lookup
 - **StackVector**: Small vector optimization with stack storage and automatic heap fallback
@@ -154,24 +156,6 @@ target_link_libraries(your_target PRIVATE nfx-containers::nfx-containers)
 ```
 
 ### Building
-
-> ⚠️ **Important**: For maximum performance, **compile with SIMD flags** to enable hardware-accelerated hashing (provided by nfx-hashing dependency). Without flags like `-msse4.2` or `/arch:AVX`, the compiler won't emit SSE4.2 instructions, resulting in slower software fallback.
-
-**Recommended Compiler Flags:**
-
-- **GCC/Clang**: `-march=native` (auto-detect) or specific flags like `-msse4.2`, `-mavx`, `-mavx2`
-- **MSVC**: `/arch:AVX` or `/arch:AVX2`
-
-**CMake Example:**
-
-```cmake
-target_compile_options(your_target PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX2>
-    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
-)
-```
-
-**Build Commands:**
 
 ```bash
 # Clone the repository
@@ -299,17 +283,19 @@ int main()
         std::cout << "Apple costs $" << it->second << "\n";
     }
 
+    // StackHashMap - Small buffer optimization with stack/heap hybrid
+    StackHashMap<std::string, int, 4> cache;  // Up to 4 pairs on stack
+    cache.insertOrAssign("x", 10);
+    cache.insertOrAssign("y", 20);
+    
+    if (int* val = cache.find("x")) {
+        std::cout << "x = " << *val << "\n";
+    }
+
     // StackVector - Stack-optimized vector for small collections
     StackVector<int, 4> numbers;  // Stores up to 4 ints on stack
     numbers.push_back(10);
     numbers.push_back(20);
-    numbers.push_back(30);
-    
-    // No heap allocation for small sizes!
-    for (int num : numbers) {
-        std::cout << num << " ";
-    }
-    std::cout << "\n";
 
     return 0;
 }
@@ -329,7 +315,7 @@ second: 2
 second first third
 two = 2
 Apple costs $1.99
-10 20 30
+x = 10
 ```
 
 ## Installation & Packaging
@@ -391,7 +377,10 @@ nfx-containers/
 │   │   ├── FastHashMap.h        # Robin Hood hash map implementation
 │   │   ├── FastHashSet.h        # Robin Hood hash set implementation
 │   │   ├── OrderedHashMap.h     # Insertion-order preserving hash map
+│   │   ├── OrderedHashSet.h     # Insertion-order preserving hash set
 │   │   ├── PerfectHashMap.h     # Displacement-based perfect hash map (inspired by DNV Vista SDK)
+│   │   ├── StackHashMap.h       # Small buffer optimization hash map with stack/heap hybrid
+│   │   ├── StackHashSet.h       # Small buffer optimization hash set with stack/heap hybrid
 │   │   ├── StackVector.h        # Small vector optimization with stack storage
 │   │   ├── TransparentHashMap.h # Enhanced unordered_map wrapper
 │   │   └── TransparentHashSet.h # Enhanced unordered_set wrapper
@@ -444,4 +433,4 @@ All dependencies are automatically fetched via CMake FetchContent when building 
 
 ---
 
-_Updated on January 24, 2026_
+_Updated on February 8, 2026_

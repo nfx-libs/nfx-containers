@@ -4,8 +4,35 @@
 
 ### Added
 
+- NIL
+
+### Changed
+
+- NIL
+
+### Deprecated
+
+- NIL
+
+### Removed
+
+- NIL
+
+### Fixed
+
+- NIL
+
+### Security
+
+- NIL
+
+## [0.4.0] - 2026-02-08
+
+### Added
+
 - **StackHashMap**: Small buffer optimization hash map with hybrid stack/heap storage
 - **StackHashSet**: Small buffer optimization hash set with hybrid stack/heap storage
+- **API Consistency**: Added `at(key)`, `find(key)`, and `insertOrAssign(key, value)` methods across all containers
 
 - **STL C++17 Compatibility**: Added `extract()` and `merge()` methods to all modifiable containers
   - **FastHashMap** and **FastHashSet**: 
@@ -22,22 +49,7 @@
 
 - **BREAKING:** Renamed **SmallVector** to **StackVector**
 - **PerfectHashMap**: Removed redundant `m_occupied` bitmap - use `std::optional::has_value()` instead
-  
-### Deprecated
-
-- NIL
-
-### Removed
-
-- NIL
-
-### Fixed
-
-- NIL
-
-### Security
-
-- NIL
+- Bump nfx-hashing from 0.1.2 to 0.2.0
 
 ## [0.3.2] - 2026-02-03
 

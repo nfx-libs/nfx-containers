@@ -6,18 +6,10 @@ Project roadmap and task tracking for the nfx-containers library.
 
 - [ ] Add `FlatHashMap` and `FlatHashSet` containers (optimized for low load factors and extreme performance)
   - [ ] Tombstone handling for deletions
-- [ ] Add advanced STL methods
-  - [ ] `extract()` method for node-handle-like semantics
-  - [ ] `merge()` method for bulk transfer between containers
-  - [ ] `rehash(n)` and `reserve(n)` for explicit capacity control
-  - [ ] `contains()` method
 - [ ] Add `FastHashMultiMap` and `FastHashMultiSet` containers (indices, graph adjacency lists, grouped data)
   - [ ] Support duplicate keys (many-to-many relationships)
   - [ ] `equalRange()` method for retrieving all values for a key
   - [ ] Efficient storage with value chaining or bucketing
-- [ ] Add `SmallHashMap<N>` and `SmallHashSet<N>` with SBO (inline storage for ≤N elements)
-  - [ ] Template parameter for capacity threshold
-  - [ ] Automatic spillover to heap when N exceeded
 - [ ] Add custom allocator support
   - [ ] `Allocator` template parameter for all containers
   - [ ] Arena/pool allocator compatibility
@@ -37,4 +29,7 @@ Project roadmap and task tracking for the nfx-containers library.
 
 ### Done ✓
 
-- [x] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches))
+- [x] Add `OrderedHashMap` and `OrderedHashSet` containers (config files, JSON parsing, stable iteration, LRU caches)
+- [x] Add `StackHashMap` and `StackHashSet` with SBO (inline storage with automatic heap fallback)
+- [x] Add advanced STL methods (`extract()`, `merge()`, `contains()`)
+- [x] Add API consistency across all containers (`at()`, `find()`, `insertOrAssign()`)
