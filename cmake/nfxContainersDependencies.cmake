@@ -18,7 +18,7 @@ set(CMAKE_FIND_QUIETLY      ON     )
 # Dependency versions
 #----------------------------------------------
 
-set(NFX_CONTAINERS_NFX_HASHING_VERSION "0.1.2")
+set(NFX_CONTAINERS_NFX_HASHING_VERSION "0.2.0")
 
 #----------------------------------------------
 # FetchContent dependencies
@@ -36,6 +36,7 @@ set(FETCHCONTENT_QUIET OFF)
 # --- nfx-hashing ---
 find_package(nfx-hashing ${NFX_CONTAINERS_NFX_HASHING_VERSION} QUIET)
 if(NOT nfx-hashing_FOUND)
+    set(NFX_HASHING_ENABLE_SIMD         ON  CACHE BOOL "")
     set(NFX_HASHING_BUILD_TESTS         OFF CACHE BOOL "")
     set(NFX_HASHING_BUILD_SAMPLES       OFF CACHE BOOL "")
     set(NFX_HASHING_BUILD_BENCHMARKS    OFF CACHE BOOL "")
