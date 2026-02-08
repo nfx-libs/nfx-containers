@@ -280,26 +280,28 @@ namespace nfx::containers
     //=====================================================================
 
     template <typename TKey, size_t N, typename KeyEqual>
-    inline size_t StackHashSet<TKey, N, KeyEqual>::count( const TKey& key ) const
+    inline const TKey* StackHashSet<TKey, N, KeyEqual>::find( const TKey& key ) const noexcept
     {
         if ( isOnStack() )
         {
+            // Linear search on stack storage
             for ( const auto& entry : m_stack )
             {
                 if ( entry.data.has_value() && KeyEqual{}( *entry.data, key ) )
                 {
-                    return 1;
+                    return &*entry.data;
                 }
             }
-            return 0;
+            return nullptr;
         }
-        return m_heap->contains( key ) ? 1 : 0;
+        // Delegate to heap storage
+        return m_heap->find( key );
     }
 
     template <typename TKey, size_t N, typename KeyEqual>
     inline bool StackHashSet<TKey, N, KeyEqual>::contains( const TKey& key ) const
     {
-        return count( key ) > 0;
+        return find( key ) != nullptr;
     }
 
     template <typename TKey, size_t N, typename KeyEqual>
@@ -319,6 +321,17 @@ namespace nfx::containers
             return false;
         }
         return m_heap->contains( key );
+    }
+
+    template <typename TKey, size_t N, typename KeyEqual>
+    inline const TKey& StackHashSet<TKey, N, KeyEqual>::at( const TKey& key ) const
+    {
+        const TKey* result{ find( key ) };
+        if ( !result )
+        {
+            throw std::out_of_range{ "StackHashSet::at: key not found" };
+        }
+        return *result;
     }
 
     //=====================================================================

@@ -118,8 +118,25 @@ int main()
         std::cout << "contains(\"urgent\"): " << ( categories.contains( "urgent" ) ? "true" : "false" ) << "\n";
         std::cout << "contains(\"rejected\"): " << ( categories.contains( "rejected" ) ? "true" : "false" ) << "\n";
 
-        std::cout << "count(\"urgent\"): " << categories.count( "urgent" ) << "\n";
-        std::cout << "count(\"rejected\"): " << categories.count( "rejected" ) << "\n";
+        // Using find() to get pointer to key
+        if ( const std::string * found{ categories.find( "urgent" ) } )
+        {
+            std::cout << "find(\"urgent\") = \"" << *found << "\"\n";
+        }
+
+        const std::string* notFound{ categories.find( "rejected" ) };
+        std::cout << "find(\"rejected\") = " << ( notFound ? "found" : "nullptr" ) << "\n";
+
+        // Using at() with exception handling
+        try
+        {
+            const std::string& key{ categories.at( "approved" ) };
+            std::cout << "at(\"approved\") = \"" << key << "\"\n";
+        }
+        catch ( const std::out_of_range& )
+        {
+            std::cout << "at(\"approved\") threw exception\n";
+        }
 
         std::cout << "\n";
     }
@@ -261,6 +278,5 @@ int main()
         std::cout << "\n";
     }
 
-    std::cout << "=== Sample completed ===\n";
     return 0;
 }

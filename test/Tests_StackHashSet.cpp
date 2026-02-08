@@ -305,21 +305,90 @@ namespace nfx::containers::test
     }
 
     //=====================================================================
-    // Lookup - count()
+    // Lookup - find()
     //=====================================================================
 
-    TEST( StackHashSetTests, Count_ExistingKey )
+    TEST( StackHashSetTests, Find_ExistingKey_Stack )
     {
-        StackHashSet<std::string> set{ "exists" };
+        StackHashSet<std::string> set{ "key1", "key2" };
 
-        EXPECT_EQ( set.count( "exists" ), 1 );
+        const std::string* found{ set.find( "key1" ) };
+        ASSERT_NE( found, nullptr );
+        EXPECT_EQ( *found, "key1" );
+
+        found = set.find( "key2" );
+        ASSERT_NE( found, nullptr );
+        EXPECT_EQ( *found, "key2" );
     }
 
-    TEST( StackHashSetTests, Count_MissingKey )
+    TEST( StackHashSetTests, Find_MissingKey_Stack )
+    {
+        StackHashSet<std::string> set{ "key1" };
+
+        const std::string* found{ set.find( "missing" ) };
+        EXPECT_EQ( found, nullptr );
+    }
+
+    TEST( StackHashSetTests, Find_ExistingKey_Heap )
+    {
+        StackHashSet<int, 2> set;
+        // Force transition to heap
+        set.insert( 1 );
+        set.insert( 2 );
+        set.insert( 3 );
+
+        const int* found{ set.find( 2 ) };
+        ASSERT_NE( found, nullptr );
+        EXPECT_EQ( *found, 2 );
+    }
+
+    TEST( StackHashSetTests, Find_ReturnsStoredKey )
+    {
+        StackHashSet<std::string> set{ "stored" };
+
+        const std::string* found{ set.find( "stored" ) };
+        ASSERT_NE( found, nullptr );
+        // Verify it's the actual stored key
+        EXPECT_EQ( *found, "stored" );
+    }
+
+    //=====================================================================
+    // Lookup - at()
+    //=====================================================================
+
+    TEST( StackHashSetTests, At_ExistingKey_Stack )
+    {
+        StackHashSet<std::string> set{ "key1", "key2" };
+
+        EXPECT_EQ( set.at( "key1" ), "key1" );
+        EXPECT_EQ( set.at( "key2" ), "key2" );
+    }
+
+    TEST( StackHashSetTests, At_ThrowsOnMissing_Stack )
     {
         StackHashSet<std::string> set{ "exists" };
 
-        EXPECT_EQ( set.count( "missing" ), 0 );
+        EXPECT_THROW( set.at( "missing" ), std::out_of_range );
+    }
+
+    TEST( StackHashSetTests, At_ExistingKey_Heap )
+    {
+        StackHashSet<int, 2> set;
+        set.insert( 1 );
+        set.insert( 2 );
+        set.insert( 3 ); // Heap transition
+
+        EXPECT_EQ( set.at( 2 ), 2 );
+    }
+
+    TEST( StackHashSetTests, At_ThrowsOnMissing_Heap )
+    {
+        StackHashSet<int, 2> set;
+        set.insert( 1 );
+        set.insert( 2 );
+        set.insert( 3 ); // Heap transition
+
+        EXPECT_THROW( set.at( 99 ), std::out_of_range );
     }
 
     //=====================================================================

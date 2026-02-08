@@ -227,10 +227,10 @@ namespace nfx::containers
     template <typename KeyType>
     inline const TKey& OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::at( const KeyType& key ) const
     {
-        const TKey* value = find( key );
+        const TKey* value{ find( key ) };
         if ( !value )
         {
-            throw std::out_of_range( "OrderedHashSet::at: key not found" );
+            throw std::out_of_range{ "OrderedHashSet::at: key not found" };
         }
         return *value;
     }
