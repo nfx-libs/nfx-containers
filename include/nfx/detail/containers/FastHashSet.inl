@@ -135,7 +135,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline const TKey* FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::find( const KeyType& key ) const noexcept
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance = 0;
 
@@ -292,7 +292,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline bool FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::erase( const KeyType& key ) noexcept
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -354,7 +354,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline std::optional<TKey> FastHashSet<TKey, HashType, Seed, THasher, KeyEqual>::extract( const KeyType& key )
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -517,7 +517,7 @@ namespace nfx::containers
             resize();
         }
 
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -582,7 +582,7 @@ namespace nfx::containers
             resize();
         }
 
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
