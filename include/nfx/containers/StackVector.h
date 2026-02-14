@@ -317,14 +317,14 @@ namespace nfx::containers
         /** @brief Get const reference to heap storage */
         inline const std::vector<T>& heapData() const noexcept;
 
+        union alignas( alignof( T ) > alignof( std::vector<T> ) ? alignof( T ) : alignof( std::vector<T> ) )
+        {
+            unsigned char m_stackStorage[N * sizeof( T )];         ///< Stack-based storage for small arrays
+            unsigned char m_heapStorage[sizeof( std::vector<T> )]; ///< Heap-based storage (std::vector) for large arrays
+        };
+
         size_type m_size;  ///< Number of elements currently stored
         bool m_usingStack; ///< True if using stack storage, false if using heap
-
-        union
-        {
-            alignas( T ) unsigned char m_stackStorage[N * sizeof( T )];                      ///< Stack-based storage for small arrays
-            alignas( std::vector<T> ) unsigned char m_heapStorage[sizeof( std::vector<T> )]; ///< Heap-based storage (std::vector) for large arrays
-        };
     };
 } // namespace nfx::containers
 
