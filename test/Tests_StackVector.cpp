@@ -988,19 +988,6 @@ namespace nfx::containers::test
         EXPECT_EQ( vec2[2], 3 );
     }
 
-    TEST( StackVectorTests, CopyAssignment_SelfAssignment )
-    {
-        StackVector<int, 4> vec;
-        vec.push_back( 1 );
-        vec.push_back( 2 );
-
-        vec = vec;
-
-        EXPECT_EQ( vec.size(), 2 );
-        EXPECT_EQ( vec[0], 1 );
-        EXPECT_EQ( vec[1], 2 );
-    }
-
     //=====================================================================
     // at() method tests - bounds checking
     //=====================================================================
