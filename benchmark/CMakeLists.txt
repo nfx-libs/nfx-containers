@@ -93,6 +93,9 @@ foreach(benchmark_source ${benchmark_sources})
             PRIVATE
                 $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX2>
                 $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-msse4.2>
+
+                $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wall -Wextra -Werror>
         )
 
         #----------------------------------------------

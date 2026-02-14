@@ -26,6 +26,17 @@
 
 - NIL
 
+## [0.5.1] - 2026-02-14
+
+### Changed
+
+- Removed propagation of warnings-as-errors to consuming projects. Strict flags (`-Werror`/`/WX`) are now applied only to local test, sample and benchmark targets to avoid breaking downstream consumers.
+- Bump nfx-hashing from 0.3.0 to 0.3.1
+
+### Fixed
+
+- Ensure CI remains strict while avoiding forcing `-Werror` on library consumers.
+
 ## [0.5.0] - 2026-02-14
 
 ### Changed
