@@ -135,7 +135,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline TValue* FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::find( const KeyType& key ) noexcept
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance = 0;
 
@@ -163,7 +163,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline const TValue* FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::find( const KeyType& key ) const noexcept
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance = 0;
 
@@ -346,7 +346,7 @@ namespace nfx::containers
     inline std::pair<typename FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator, bool>
     FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::tryEmplace( const TKey& key, Args&&... args )
     {
-        const HashType hash{ m_hasher( key ) };
+        const HashType hash{ static_cast<HashType>( m_hasher( key ) ) };
         size_t idx{ hash & m_mask };
 
         for ( ;; )
@@ -388,7 +388,7 @@ namespace nfx::containers
     inline std::pair<typename FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator, bool>
     FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::tryEmplace( TKey&& key, Args&&... args )
     {
-        const HashType hash{ m_hasher( key ) };
+        const HashType hash{ static_cast<HashType>( m_hasher( key ) ) };
         size_t idx{ hash & m_mask };
 
         for ( ;; )
@@ -466,7 +466,7 @@ namespace nfx::containers
     template <typename KeyType>
     inline bool FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::erase( const KeyType& key ) noexcept
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -529,7 +529,7 @@ namespace nfx::containers
     inline std::optional<std::pair<TKey, TValue>>
     FastHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::extract( const KeyType& key )
     {
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -698,7 +698,7 @@ namespace nfx::containers
             resize();
         }
 
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
@@ -765,7 +765,7 @@ namespace nfx::containers
             resize();
         }
 
-        const HashType hash( m_hasher( key ) );
+        const HashType hash( static_cast<HashType>( m_hasher( key ) ) );
 
         size_t pos( static_cast<size_t>( hash & m_mask ) );
         uint32_t distance( 0 );
