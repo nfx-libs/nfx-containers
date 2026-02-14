@@ -33,7 +33,74 @@
 
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
+
+// Custom Point3D struct for demonstration
+struct Point3D
+{
+    int x, y, z;
+
+    bool operator==( const Point3D& other ) const
+    {
+        return x == other.x && y == other.y && z == other.z;
+    }
+};
+
+// Custom hasher with heterogeneous lookup support
+struct Point3DHasher
+{
+    using is_transparent = void;
+
+    uint32_t operator()( const Point3D& p ) const noexcept
+    {
+        uint32_t hash = 0x811c9dc5; // FNV offset basis
+        hash ^= static_cast<uint32_t>( p.x );
+        hash *= 0x01000193; // FNV prime
+        hash ^= static_cast<uint32_t>( p.y );
+        hash *= 0x01000193;
+        hash ^= static_cast<uint32_t>( p.z );
+        hash *= 0x01000193;
+        return hash;
+    }
+
+    // Heterogeneous lookup: accept tuple-like types
+    template <typename T1, typename T2, typename T3>
+    uint32_t operator()( const std::tuple<T1, T2, T3>& t ) const noexcept
+    {
+        uint32_t hash = 0x811c9dc5;
+        hash ^= static_cast<uint32_t>( std::get<0>( t ) );
+        hash *= 0x01000193;
+        hash ^= static_cast<uint32_t>( std::get<1>( t ) );
+        hash *= 0x01000193;
+        hash ^= static_cast<uint32_t>( std::get<2>( t ) );
+        hash *= 0x01000193;
+        return hash;
+    }
+};
+
+// Custom equality with heterogeneous lookup support
+struct Point3DEqual
+{
+    using is_transparent = void;
+
+    bool operator()( const Point3D& lhs, const Point3D& rhs ) const noexcept
+    {
+        return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+    }
+
+    template <typename T1, typename T2, typename T3>
+    bool operator()( const Point3D& lhs, const std::tuple<T1, T2, T3>& rhs ) const noexcept
+    {
+        return lhs.x == std::get<0>( rhs ) && lhs.y == std::get<1>( rhs ) && lhs.z == std::get<2>( rhs );
+    }
+
+    template <typename T1, typename T2, typename T3>
+    bool operator()( const std::tuple<T1, T2, T3>& lhs, const Point3D& rhs ) const noexcept
+    {
+        return std::get<0>( lhs ) == rhs.x && std::get<1>( lhs ) == rhs.y && std::get<2>( lhs ) == rhs.z;
+    }
+};
 
 int main()
 {
@@ -267,38 +334,11 @@ int main()
     }
 
     //=====================================================================
-    // 11. Custom struct with custom hasher
+    // 11. Custom struct with custom hasher and heterogeneous lookup
     //=====================================================================
     {
-        std::cout << "11. Custom struct with custom hasher\n";
-        std::cout << "-------------------------------------\n";
-
-        struct Point3D
-        {
-            int x, y, z;
-
-            bool operator==( const Point3D& other ) const
-            {
-                return x == other.x && y == other.y && z == other.z;
-            }
-        };
-
-        struct Point3DHasher
-        {
-            using is_transparent = void;
-
-            uint32_t operator()( const Point3D& p ) const noexcept
-            {
-                uint32_t hash = 0x811c9dc5; // FNV offset basis
-                hash ^= static_cast<uint32_t>( p.x );
-                hash *= 0x01000193; // FNV prime
-                hash ^= static_cast<uint32_t>( p.y );
-                hash *= 0x01000193;
-                hash ^= static_cast<uint32_t>( p.z );
-                hash *= 0x01000193;
-                return hash;
-            }
-        };
+        std::cout << "11. Custom struct with custom hasher and heterogeneous lookup\n";
+        std::cout << "--------------------------------------------------------------\n";
 
         std::vector<std::pair<Point3D, std::string>> data = {
             { { 0, 0, 0 }, "origin" },
@@ -306,11 +346,18 @@ int main()
             { { 0, 1, 0 }, "y-axis" },
             { { 1, 1, 1 }, "diagonal" } };
 
-        PerfectHashMap<Point3D, std::string, uint32_t, 0x811c9dc5, Point3DHasher, std::equal_to<>> point3DMap( std::move( data ) );
+        PerfectHashMap<Point3D, std::string, uint32_t, 0x811c9dc5, Point3DHasher, Point3DEqual> point3DMap( std::move( data ) );
 
+        // Standard lookup with Point3D
         Point3D lookup = { 1, 1, 1 };
         std::cout << "point3DMap[{1,1,1}]: " << point3DMap.at( lookup ) << "\n";
+
+        // Heterogeneous lookup with tuple (no Point3D construction)
+        auto tuple_lookup = std::make_tuple( 1, 0, 0 );
+        std::cout << "point3DMap[tuple{1,0,0}]: " << point3DMap.at( tuple_lookup ) << "\n";
+
         std::cout << "Using custom Point3DHasher with FNV-1a mixing\n";
+        std::cout << "Supports heterogeneous lookup via is_transparent\n";
         std::cout << "Table size: " << point3DMap.size() << " slots\n";
 
         std::cout << "\n";
