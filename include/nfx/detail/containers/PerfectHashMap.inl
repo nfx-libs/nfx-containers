@@ -89,8 +89,8 @@ namespace nfx::containers
         // Compute hashes and fill buckets in one pass
         for ( size_t i = 0; i < itemCount; ++i )
         {
-            hash_type h = m_hasher( items[i].first );
-            size_t bucketIndex = h & ( tableSize - 1 );
+            hash_type h = static_cast<hash_type>( m_hasher( items[i].first ) );
+            size_t bucketIndex = static_cast<size_t>( h ) & ( tableSize - 1 );
             buckets[bucketIndex].emplace_back( i, h );
         }
 
@@ -245,13 +245,14 @@ namespace nfx::containers
         }
 
         const size_t tableSize = m_table.size();
-        const hash_type hashValue = m_hasher( key );
-        const size_t bucketIndex = hashValue & ( tableSize - 1 );
+        const hash_type hashValue = static_cast<hash_type>( m_hasher( key ) );
+        const size_t bucketIndex = static_cast<size_t>( hashValue ) & ( tableSize - 1 );
         const seed_type seed = m_seeds[bucketIndex];
+        const hash_type tableSizeForMix = static_cast<hash_type>( tableSize );
 
         const size_t position = ( seed < 0 )
                                     ? static_cast<size_t>( -seed - 1 )
-                                    : hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSize );
+                                    : static_cast<size_t>( hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSizeForMix ) );
 
         return m_table[position].has_value() && m_keyEqual( m_table[position]->first, key );
     }
@@ -266,13 +267,14 @@ namespace nfx::containers
         }
 
         const size_t tableSize = m_table.size();
-        const hash_type hashValue = m_hasher( key );
-        const size_t bucketIndex = hashValue & ( tableSize - 1 );
+        const hash_type hashValue = static_cast<hash_type>( m_hasher( key ) );
+        const size_t bucketIndex = static_cast<size_t>( hashValue ) & ( tableSize - 1 );
         const seed_type seed = m_seeds[bucketIndex];
+        const hash_type tableSizeForMix = static_cast<hash_type>( tableSize );
 
         const size_t position = ( seed < 0 )
                                     ? static_cast<size_t>( -seed - 1 )
-                                    : hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSize );
+                                    : static_cast<size_t>( hashing::seedMix<hash_type>( static_cast<hash_type>( seed ), hashValue, tableSizeForMix ) );
 
         if ( m_table[position].has_value() && m_keyEqual( m_table[position]->first, key ) )
         {
