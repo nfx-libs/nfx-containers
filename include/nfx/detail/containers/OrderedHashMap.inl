@@ -613,7 +613,6 @@ namespace nfx::containers
         // Find the bucket containing this node
         const HashType hash( pos.m_node->hash );
         size_t bucketPos( static_cast<size_t>( hash & m_mask ) );
-        uint32_t distance = 0;
 
         while ( m_buckets[bucketPos].occupied )
         {
@@ -623,7 +622,6 @@ namespace nfx::containers
                 break;
             }
             bucketPos = ( bucketPos + 1 ) & m_mask;
-            ++distance;
         }
 
         return Iterator{ nextNode, this };
@@ -980,7 +978,6 @@ namespace nfx::containers
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline void OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::resize()
     {
-        const size_t oldCapacity{ m_capacity };
         m_capacity <<= 1;
         m_mask = m_capacity - 1;
 
@@ -1117,14 +1114,14 @@ namespace nfx::containers
     inline typename OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::reference
     OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::operator*() const
     {
-        return reinterpret_cast<reference>( m_node->data );
+        return *std::launder( reinterpret_cast<pointer>( &m_node->data ) );
     }
 
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline typename OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::pointer
     OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::Iterator::operator->() const
     {
-        return reinterpret_cast<pointer>( &m_node->data );
+        return std::launder( reinterpret_cast<pointer>( &m_node->data ) );
     }
 
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
@@ -1219,14 +1216,14 @@ namespace nfx::containers
     inline typename OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::reference
     OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator*() const
     {
-        return reinterpret_cast<reference>( m_node->data );
+        return *std::launder( reinterpret_cast<pointer>( &m_node->data ) );
     }
 
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline typename OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::pointer
     OrderedHashMap<TKey, TValue, HashType, Seed, THasher, KeyEqual>::ConstIterator::operator->() const
     {
-        return reinterpret_cast<pointer>( &m_node->data );
+        return std::launder( reinterpret_cast<pointer>( &m_node->data ) );
     }
 
     template <typename TKey, typename TValue, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
