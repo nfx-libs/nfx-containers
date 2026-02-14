@@ -29,6 +29,17 @@ target_compile_features(${PROJECT_NAME}
 )
 
 #----------------------------------------------
+# Compiler warnings
+#----------------------------------------------
+
+# --- Strict warnings for consuming targets ---
+target_compile_options(${PROJECT_NAME}
+    INTERFACE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wall -Wextra -Werror>
+)
+
+#----------------------------------------------
 # Target dependency linking
 #----------------------------------------------
 
