@@ -21,7 +21,7 @@ set(NFX_CONTAINERS_VERSION_PATCH "@PROJECT_VERSION_PATCH@")
 
 # Our library dependencies
 include(CMakeFindDependencyMacro)
-find_dependency(nfx-hashing REQUIRED)
+find_dependency(nfx-hashing @NFX_CONTAINERS_NFX_HASHING_VERSION@ REQUIRED)
 
 # Installation paths (for reference)
 set_and_check(NFX_CONTAINERS_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
