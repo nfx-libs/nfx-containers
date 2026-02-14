@@ -26,6 +26,20 @@
 
 - NIL
 
+## [0.5.0] - 2026-02-14
+
+### Changed
+
+- Bump nfx-hashing from 0.2.0 to 0.3.0
+
+### Fixed
+
+- **Compiler Warnings**: Fixed all MSVC, GCC, and Clang warnings with strict warning flags enabled
+  - **Type Safety**: Added explicit casts from `size_t` to `hash_type` in PerfectHashMap, FastHashSet
+  - **Memory Alignment**: Fixed StackVector union alignment
+  - **Strict Aliasing**: Added `std::launder()` in OrderedHashMap iterators for proper type-punned pointer access
+- **OrderedHashMap, OrderedHashSet**: Removed unused distance variable in bucket search operations
+
 ## [0.4.1] - 2026-02-08
 
 ### Added
