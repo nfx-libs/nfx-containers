@@ -415,7 +415,6 @@ namespace nfx::containers
         // Find the bucket containing this node
         const HashType hash( pos.m_node->hash );
         size_t bucketPos( static_cast<size_t>( hash & m_mask ) );
-        uint32_t distance = 0;
 
         while ( m_buckets[bucketPos].occupied )
         {
@@ -425,7 +424,6 @@ namespace nfx::containers
                 break;
             }
             bucketPos = ( bucketPos + 1 ) & m_mask;
-            ++distance;
         }
 
         return Iterator{ nextNode, this };
@@ -779,7 +777,6 @@ namespace nfx::containers
     template <typename TKey, hashing::Hash32or64 HashType, HashType Seed, typename THasher, typename KeyEqual>
     inline void OrderedHashSet<TKey, HashType, Seed, THasher, KeyEqual>::resize()
     {
-        const size_t oldCapacity{ m_capacity };
         m_capacity <<= 1;
         m_mask = m_capacity - 1;
 
