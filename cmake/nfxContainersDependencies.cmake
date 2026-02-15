@@ -18,7 +18,7 @@ set(CMAKE_FIND_QUIETLY      ON     )
 # Dependency versions
 #----------------------------------------------
 
-set(NFX_CONTAINERS_NFX_HASHING_VERSION "0.3.1")
+set(NFX_CONTAINERS_NFX_HASHING_VERSION "0.4.0")
 
 #----------------------------------------------
 # FetchContent dependencies
