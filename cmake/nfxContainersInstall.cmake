@@ -68,7 +68,7 @@ if(NOT nfx-hashing_FOUND AND TARGET nfx-hashing::nfx-hashing)
         
         write_basic_package_version_file(
             "${CMAKE_CURRENT_BINARY_DIR}/nfx-hashing-config-version.cmake"
-            VERSION 0.1.1
+            VERSION ${NFX_CONTAINERS_NFX_HASHING_VERSION}
             COMPATIBILITY SameMajorVersion
         )
         
@@ -173,18 +173,15 @@ install(
 #----------------------------------------------
 
 install(
-    FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
+    FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
     DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
-    RENAME "LICENSE-${PROJECT_NAME}.txt"
 )
 
 file(GLOB license_files "${CMAKE_CURRENT_SOURCE_DIR}/licenses/LICENSE-*")
 foreach(license_file ${license_files})
-    get_filename_component(license_name ${license_file} NAME)
     install(
         FILES ${license_file}
         DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
-        RENAME "${license_name}.txt"
     )
 endforeach()
 

@@ -34,6 +34,8 @@
 
 #pragma once
 
+#include <nfx/Hashing.h>
+
 #include <cstdint>
 #include <cstddef>
 #include <functional>
@@ -43,8 +45,6 @@
 #include <string_view>
 #include <type_traits>
 #include <vector>
-
-#include <nfx/Hashing.h>
 
 namespace nfx::containers
 {

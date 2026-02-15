@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <nfx/containers/FastHashMap.h>
+#include "nfx/containers/FastHashMap.h"
 
 #include <array>
 #include <cstddef>

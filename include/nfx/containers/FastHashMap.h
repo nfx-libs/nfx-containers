@@ -31,6 +31,10 @@
 
 #pragma once
 
+#include "nfx/detail/containers/CompilerSupport.h"
+
+#include <nfx/Hashing.h>
+
 #include <algorithm>
 #include <concepts>
 #include <cstddef>
@@ -45,10 +49,6 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-
-#include <nfx/Hashing.h>
-
-#include "nfx/detail/containers/CompilerSupport.h"
 
 namespace nfx::containers
 {

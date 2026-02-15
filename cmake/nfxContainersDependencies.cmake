@@ -36,7 +36,6 @@ set(FETCHCONTENT_QUIET OFF)
 # --- nfx-hashing ---
 find_package(nfx-hashing ${NFX_CONTAINERS_NFX_HASHING_VERSION} QUIET)
 if(NOT nfx-hashing_FOUND)
-    set(NFX_HASHING_ENABLE_SIMD         ON  CACHE BOOL "")
     set(NFX_HASHING_BUILD_TESTS         OFF CACHE BOOL "")
     set(NFX_HASHING_BUILD_SAMPLES       OFF CACHE BOOL "")
     set(NFX_HASHING_BUILD_BENCHMARKS    OFF CACHE BOOL "")
@@ -44,8 +43,6 @@ if(NOT nfx-hashing_FOUND)
     set(NFX_HASHING_INSTALL_PROJECT     OFF CACHE BOOL "")
     set(NFX_HASHING_PACKAGE_SOURCE      OFF CACHE BOOL "")
     set(NFX_HASHING_PACKAGE_ARCHIVE     OFF CACHE BOOL "")
-    set(NFX_HASHING_PACKAGE_DEB         OFF CACHE BOOL "")
-    set(NFX_HASHING_PACKAGE_RPM         OFF CACHE BOOL "")
 
     FetchContent_Declare(
         nfx-hashing

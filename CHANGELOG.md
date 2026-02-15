@@ -26,6 +26,18 @@
 
 - NIL
 
+## [0.6.0] - 2026-02-15
+
+### Changed
+
+- Bump nfx-hashing from 0.3.1 to 0.4.0
+- Simplified CMake packaging configuration (removed unused DEB/RPM/WIX package generators)
+- Optimized Doxygen documentation generation (disabled call/caller graphs for faster builds)
+
+### Fixed
+
+- Fixed hardcoded nfx-hashing version in install script (now uses `${NFX_CONTAINERS_NFX_HASHING_VERSION}`)
+
 ## [0.5.1] - 2026-02-14
 
 ### Changed

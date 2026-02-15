@@ -31,14 +31,14 @@
 
 #pragma once
 
+#include <nfx/Hashing.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
-
-#include <nfx/Hashing.h>
 
 namespace nfx::containers
 {

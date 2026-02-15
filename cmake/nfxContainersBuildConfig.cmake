@@ -17,46 +17,10 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 #----------------------------------------------
-# Multi-config generator setup
-#----------------------------------------------
-
-# --- For multi-config generators, set available configurations ---
-if(CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_CONFIGURATION_TYPES "Release;Debug;RelWithDebInfo;MinSizeRel" CACHE STRING "Available build configurations" FORCE)
-    message(STATUS "Multi-config generator detected. Available configurations: ${CMAKE_CONFIGURATION_TYPES}")
-else()
-    # --- For single-config generators (Makefiles, Ninja), set default build type ---
-    if(NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
-        message(STATUS "Single-config generator detected. Defaulting to optimized build type: ${CMAKE_BUILD_TYPE}")
-    else()
-        message(STATUS "Single-config generator detected. Using specified build type: ${CMAKE_BUILD_TYPE}")
-    endif()
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" "RelWithDebInfo" "MinSizeRel")
-endif()
-
-#----------------------------------------------
-# Install prefix configuration
-#----------------------------------------------
-
-include(GNUInstallDirs)
-
-# Set default installation path to nfx
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    if(WIN32)
-        set(CMAKE_INSTALL_PREFIX "C:/Program Files/nfx" CACHE PATH "Installation directory" FORCE)
-    else()
-        set(CMAKE_INSTALL_PREFIX "/usr/local/nfx" CACHE PATH "Installation directory" FORCE)
-    endif()
-    message(STATUS "Setting install prefix to '${CMAKE_INSTALL_PREFIX}'")
-endif()
-
-#----------------------------------------------
 # Directory configuration
 #----------------------------------------------
 
-set(NFX_CONTAINERS_LICENSE "MIT")
-set(NFX_CONTAINERS_LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(NFX_CONTAINERS_LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
 set(NFX_CONTAINERS_DIR         "${PROJECT_SOURCE_DIR}"         CACHE PATH  "Root directory"   )
 set(NFX_CONTAINERS_INCLUDE_DIR "${NFX_CONTAINERS_DIR}/include" CACHE PATH  "Include directory")

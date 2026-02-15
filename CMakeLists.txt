@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(nfx-containers
-    VERSION 0.5.1
+    VERSION 0.6.0
     DESCRIPTION "Modern C++20 header-only library providing high-performance hash containers with Robin Hood and perfect hashing"
     HOMEPAGE_URL "https://github.com/nfx-libs/nfx-containers"
     LANGUAGES CXX
@@ -41,14 +41,10 @@ option(NFX_CONTAINERS_BUILD_BENCHMARKS    "Build benchmarks"                   O
 option(NFX_CONTAINERS_BUILD_DOCUMENTATION "Build Doxygen documentation"        OFF)
 
 # --- Installation ---
-option(NFX_CONTAINERS_INSTALL_PROJECT     "Install project"                    OFF )
+option(NFX_CONTAINERS_INSTALL_PROJECT     "Install project"                    OFF)
 
 # --- Packaging ---
-option(NFX_CONTAINERS_PACKAGE_SOURCE      "Enable source package generation"   OFF )
-option(NFX_CONTAINERS_PACKAGE_ARCHIVE     "Enable TGZ/ZIP package generation"  OFF )
-option(NFX_CONTAINERS_PACKAGE_DEB         "Enable DEB package generation"      OFF )
-option(NFX_CONTAINERS_PACKAGE_RPM         "Enable RPM package generation"      OFF )
-option(NFX_CONTAINERS_PACKAGE_WIX         "Enable WiX Windows installer (MSI)" OFF )
+option(NFX_CONTAINERS_PACKAGE_SOURCE      "Enable source package generation"   OFF)
 
 #----------------------------------------------
 # CMake modules configuration
